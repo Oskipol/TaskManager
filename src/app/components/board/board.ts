@@ -1,9 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { BoardStoreService } from '../../services/board-store';
+import { Task } from '../../models/task.model';
 
 @Component({
   selector: 'app-board',
-  imports: [],
-  template: ` <p class="text-amber-500">board works!</p> `,
-  styleUrl: './board.css',
+  imports: [FormsModule],
+  template: `
+    
+  `
 })
-export class Board {}
+export class Board{
+
+}

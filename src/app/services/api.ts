@@ -42,17 +42,17 @@ export class ApiService {
     });
   }
   joinBoard(code :string){
-    return this.http.post<Board>(`${this}/Boards/join`, {code} ,{
+    return this.http.post<Board>(`${this.url}/Boards/join`, {code} ,{
       headers: this.headers()
     });
   }
   getTasks(id: number ){
-    return this.http.get<Task>(`${this.url}/Tasks/${id}`, {
+    return this.http.get<Task[]>(`${this.url}/Tasks/${id}`, {
       headers: this.headers()
     });
   }
   createTask(title: string, desc: string, boardId: number){
-    return this.http.post<Task>(`${this.url}/Tasks`, {title, boardId}, {
+    return this.http.post<Task>(`${this.url}/Tasks`, {title, description: desc, boardId}, {
       headers: this.headers()
     });
   }
