@@ -16,10 +16,10 @@ import { AuthService } from '../../../services/auth';
         <input [(ngModel)]="email" type="email" class="bg-gray-700 w-[80%] text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" placeholder="Email">
         <input [(ngModel)]="password1" class="bg-gray-700 w-[80%] text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" type="password" placeholder="Password">
         <input [(ngModel)]="password2" type="password" class="bg-gray-700 w-[80%] text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" placeholder="Repeat password">
-      <button (click)="register()" class="bg-blue-600 w-[40%] hover:bg-blue-700 duration-300 cursor-pointer text-white py-2 px-4 rounded-lg transition-colors">Register</button>
-      @if(error()){
+        @if(error()){
         <p class="text-red-400 text-lg">{{error()}}</p>
       }
+      <button (click)="register()" class="bg-blue-600 w-[40%] hover:bg-blue-700 duration-300 cursor-pointer text-white py-2 px-4 rounded-lg transition-colors">Register</button>    
       </div>
       <p  class="text-gray-400 rationale-regular text-center">You already have an account? <a routerLink="/login" class="text-blue-400 cursor-pointer hover:underline duration-300">Login</a></p>
       

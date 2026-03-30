@@ -46,13 +46,33 @@ export class ApiService {
       headers: this.headers()
     });
   }
+  setLeader(boardId: number, userId: number){
+    return this.http.post(`${this.url}/Boards/${boardId}/leader`, {userId}, {
+      headers: this.headers()
+    });
+  }
+  getLeader(boardId: number){
+    return this.http.get<string>(`${this.url}/Boards/${boardId}/leader`, {
+      headers: this.headers()
+    });
+  }
+  getMembers(boardId: number){
+    return this.http.get<string[]>(`${this.url}/Boards/${boardId}`, {
+      headers: this.headers()
+    });
+  }
+  getOwner(boardId: number){
+    return this.http.get<string>(`${this.url}/Boards/${boardId}/owner`, {
+      headers: this.headers()
+    });
+  }
   getTasks(id: number ){
     return this.http.get<Task[]>(`${this.url}/Tasks/${id}`, {
       headers: this.headers()
     });
   }
-  createTask(title: string, desc: string, boardId: number){
-    return this.http.post<Task>(`${this.url}/Tasks`, {title, description: desc, boardId}, {
+  createTask(title: string, assignee: string, desc: string, boardId: number){
+    return this.http.post<Task>(`${this.url}/Tasks`, {title, AssignedTo:assignee, description: desc, boardId}, {
       headers: this.headers()
     });
   }

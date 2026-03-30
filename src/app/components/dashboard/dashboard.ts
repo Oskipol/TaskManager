@@ -26,7 +26,7 @@ import { Board } from '../../models/board.model';
             (click)="goToBoard(board.id)"
             class="bg-gray-700 flex flex-col overflow-hidden justify-around items-left rationale-regular p-6 rounded-xl aspect-3/2 cursor-pointer hover:bg-gray-600 duration-300" style="container-type: inline-size;">
             <h2 style="font-size: 15cqi;" class="text-white text-xl font-bold mb-2">{{ board.name }}</h2>
-            <p style="font-size: 5cqi;" class="text-gray-400">Kod: {{ board.code }}</p>
+            <p style="font-size: 8cqi;" class="text-gray-400">Code: {{ board.code }}</p>
           </div>
       }
     </div>
