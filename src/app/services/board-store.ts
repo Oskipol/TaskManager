@@ -30,7 +30,7 @@ export class BoardStoreService {
     this.connectSignalR(boardId);
   }
   private connectSignalR(boardId: number){
-    this.connection=new HubConnectionBuilder().withUrl("http://localhost:5294/taskHub", {
+    this.connection=new HubConnectionBuilder().withUrl("http://192.168.0.25:5294/taskHub", {
       accessTokenFactory: ()=>this.auth.getToken()??""
     }).withAutomaticReconnect().build();
     this.connection.on("taskCreated", (task: Task)=>{

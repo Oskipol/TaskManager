@@ -5,15 +5,19 @@ import { CommonModule } from '@angular/common';
 import { BoardStoreService } from '../../services/board-store';
 import { Task } from '../../models/task.model';
 import { Router, RouterLink } from '@angular/router';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import {AddTask} from './add-task/add-task';
+import { TaskInfo } from './task-info/task-info';
+
 
 @Component({
   selector: 'app-board',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, DragDropModule, AddTask, TaskInfo],
   template: `
     <div class="w-full h-full inset-0 bg-gray-900 min-h-screen">
       <div
         style="container-type: inline-size;"
-        class="relative top-0 left-0 h-[10%] min-h-15 w-full flex justify-between items-center px-[5%]"
+        class="relative top-0 left-0 h-[10%] min-h-15 w-full flex justify-between items-center px-[2%]"
       >
         <h1 style="font-size: 5cqi;" class="rationale-regular font-bold text-white">
           Your Board Tasks
@@ -35,55 +39,12 @@ import { Router, RouterLink } from '@angular/router';
         </div>
       </div>
       <div></div>
-      <div class="w-full min-h-[90vh] bg-gray-800 relative">
+      <div class="w-full bg-gray-800 relative">
+        @if(TaskInfoMode()){
+          <app-task-info [selectedTask]="selectedTask()" (closed)="TaskInfoMode.set(false)"></app-task-info>
+        }
         @if (CreateTaskMode()) {
-          <div
-            class="absolute top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center"
-          >
-            <div
-              style="container-type: inline-size;"
-              class="bg-gray-800 border-2 border-gray-500 hover:border-gray-400 duration-300 z-10 lg:w-[40%] md:w-[60%] w-[70%] p-6 rounded-lg flex flex-col gap-4"
-            >
-              <h2 class="text-white text-2xl font-bold rationale-regular">Create New Task</h2>
-              <input
-                [(ngModel)]="newTaskTitle"
-                type="text"
-                class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Task title"
-              />
-              <textarea
-                [(ngModel)]="newTaskDescription"
-                class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Task description"
-              ></textarea>
-              <select
-                [(ngModel)]="newTaskAssignee"
-                class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="" disabled selected>Select Assignee</option>
-                <option value="">Free</option>
-                @for (member of members(); track $index) {
-                  @if (store.isOwner()) {
-                    <option [value]="member">{{ member }}</option>
-                  } @else {
-                    <option [value]="store.currentUser()">{{ store.currentUser() }}</option>
-                  }
-                }
-              </select>
-              <button
-                (click)="CreateTask()"
-                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded"
-              >
-                Create
-              </button>
-              <button
-                (click)="CreateTaskMode.set(false)"
-                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+          <app-add-task [members]="members()" [boardId]="boardId()" (closed)="CreateTaskMode.set(false)"></app-add-task>
         }
         <div class="p-6">
           <h3 class="text-white text-2xl font-bold rationale-regular">Free Tasks:</h3>
@@ -95,8 +56,9 @@ import { Router, RouterLink } from '@angular/router';
             @for (task of tasks(); track $index) {
               @if (task.assignedTo == '') {
                 <div
+                  (click)="TaskInfo(task)"
                   style="container-type: inline-size;"
-                  class="bg-gray-600 min-w-[20%] p-4 rounded-lg cursor-grab"
+                  class="bg-gray-600 max-h-[18vh] overflow-hidden min-w-[50%] md:min-w-[40%] lg:min-w-[30%]  p-4 rounded-lg cursor-grab"
                   draggable="true"
                   (dragstart)="onDragStart($event, task)"
                 >
@@ -115,7 +77,7 @@ import { Router, RouterLink } from '@angular/router';
             @for (member of members(); track $index) {
               <div
                 style="container-type: inline-size;"
-                class="w-full flex gap-5 min-h-[10vh] items-center p-4 mb-4 bg-gray-600 rounded-lg"
+                class="w-full flex gap-5 min-h-[10vh] overflow-x-scroll items-center p-4 mb-4 bg-gray-600 rounded-lg"
                 (dragover)="onDragOver($event)"
                 (drop)="onDrop($event, member)"
               >
@@ -130,8 +92,10 @@ import { Router, RouterLink } from '@angular/router';
                 @for (task of tasks(); track $index) {
                   @if (task.assignedTo == member) {
                     <div
+                      (click)="TaskInfo(task)"
                       style="container-type: inline-size;"
-                      class="bg-gray-700 min-w-[20%] p-4 rounded-lg cursor-grab"
+                      [ngClass]="task.status=='todo'?'bg-red-500':task.status=='in-progress'?'bg-gray-700':'bg-green-500'"
+                      class="min-w-[40%] md:min-w-[30%] lg:min-w-[20%] p-4 rounded-lg cursor-grab"
                       draggable="true"
                       (dragstart)="onDragStart($event, task)"
                     >
@@ -155,41 +119,31 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class Board implements OnInit, OnDestroy {
   tasks = signal<Task[]>([]);
-  newTaskTitle = '';
-  newTaskDescription = '';
-  newTaskAssignee = '';
   members = signal<string[]>([]);
   CreateTaskMode = signal<boolean>(false);
-  boardId = 0;
+  TaskInfoMode = signal<boolean>(false);
+  selectedTask = signal<Task | null>(null);
+  boardId = signal<number>(0);
   constructor(
     public store: BoardStoreService,
     private route: ActivatedRoute,
     private router: Router,
   ) {}
   ngOnInit() {
-    this.boardId = Number(this.route.snapshot.paramMap.get('id'));
-    this.store.loadBoard(this.boardId);
+    this.boardId.set(Number(this.route.snapshot.paramMap.get('id')));
+    this.store.loadBoard(this.boardId());
     this.tasks = this.store.tasks;
     this.members = this.store.members;
   }
   ngOnDestroy() {
     this.store.disconnect();
   }
-  CreateTask() {
-    if (!this.newTaskTitle.trim()) return;
-    this.store.createTask(
-      this.newTaskTitle,
-      this.newTaskAssignee,
-      this.newTaskDescription,
-      this.boardId,
-    );
-    this.CreateTaskMode.set(false);
-    this.newTaskTitle = '';
-    this.newTaskDescription = '';
-    this.newTaskAssignee = '';
-  }
   draggedTask: Task | null = null;
-
+  
+  TaskInfo(task: Task){
+    this.TaskInfoMode.set(true);
+    this.selectedTask.set(task);
+  }
   onDragStart(event: DragEvent, task: Task) {
     this.draggedTask = task;
   }

@@ -20,13 +20,13 @@ import { Board } from '../../models/board.model';
       <input [(ngModel)]="joinCode" type="text" class="bg-gray-700 ml-4 w-[20%] text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" placeholder="Join code">
       <button (click)="joinBoard()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded ml-4">Join Board</button>
     </div>
-    <div class="relative w-full h-full bg-gray-800 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4 p-[5%]">
+    <div class="relative w-full h-full min-h-[calc(100vh-160px)] bg-gray-800 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4 p-[5%]">
       @for(board of boards(); track board.id){
         <div
             (click)="goToBoard(board.id)"
             class="bg-gray-700 flex flex-col overflow-hidden justify-around items-left rationale-regular p-6 rounded-xl aspect-3/2 cursor-pointer hover:bg-gray-600 duration-300" style="container-type: inline-size;">
             <h2 style="font-size: 15cqi;" class="text-white text-xl font-bold mb-2">{{ board.name }}</h2>
-            <p style="font-size: 8cqi;" class="text-gray-400 z-200 cursor-text">Code: {{ board.code }}</p>
+            <p style="font-size: 8cqi;" (click)="$event.stopPropagation()" class="text-gray-400 cursor-text">Code: {{ board.code }}</p>
           </div>
       }
     </div>
