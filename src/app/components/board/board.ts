@@ -41,7 +41,7 @@ import { TaskInfo } from './task-info/task-info';
       <div></div>
       <div class="w-full bg-gray-800 relative">
         @if(TaskInfoMode()){
-          <app-task-info [selectedTask]="selectedTask()" (closed)="TaskInfoMode.set(false)"></app-task-info>
+          <app-task-info [selectedTask]="selectedTask()" [members]="members()" (closed)="TaskInfoMode.set(false)"></app-task-info>
         }
         @if (CreateTaskMode()) {
           <app-add-task [members]="members()" [boardId]="boardId()" (closed)="CreateTaskMode.set(false)"></app-add-task>
@@ -58,7 +58,7 @@ import { TaskInfo } from './task-info/task-info';
                 <div
                   (click)="TaskInfo(task)"
                   style="container-type: inline-size;"
-                  class="bg-gray-600 max-h-[18vh] overflow-hidden min-w-[50%] md:min-w-[40%] lg:min-w-[30%]  p-4 rounded-lg cursor-grab"
+                  class="bg-gray-600 overflow-hidden aspect-5/3 min-w-[50%] md:min-w-[40%] lg:min-w-[30%]  p-4 rounded-lg cursor-grab"
                   draggable="true"
                   (dragstart)="onDragStart($event, task)"
                 >
@@ -95,7 +95,7 @@ import { TaskInfo } from './task-info/task-info';
                       (click)="TaskInfo(task)"
                       style="container-type: inline-size;"
                       [ngClass]="task.status=='todo'?'bg-red-500':task.status=='in-progress'?'bg-gray-700':'bg-green-500'"
-                      class="min-w-[40%] md:min-w-[30%] lg:min-w-[20%] p-4 rounded-lg cursor-grab"
+                      class="min-w-[40%] overflow-hidden aspect-5/3 md:min-w-[30%] lg:min-w-[20%] p-4 rounded-lg cursor-grab"
                       draggable="true"
                       (dragstart)="onDragStart($event, task)"
                     >
@@ -156,6 +156,8 @@ export class Board implements OnInit, OnDestroy {
     const currentUser = this.store.currentUser();
     if (this.store.isOwner()) return true; 
     if (this.draggedTask?.assignedTo !== '') return false; 
+    if(this.draggedTask?.status=="done"||this.draggedTask?.status=="in-progress") return false;
+
     return targetMember === currentUser;
   }
 
@@ -172,7 +174,7 @@ export class Board implements OnInit, OnDestroy {
     event.preventDefault();
     if (!this.draggedTask) return;
     if (!this.store.isOwner() && this.draggedTask.assignedTo !== this.store.currentUser()) return;
-
+    if(this.draggedTask.status=="done"||this.draggedTask.status=="in-progress") return;
     this.store.updateTask({ ...this.draggedTask, assignedTo: '' });
     this.draggedTask = null;
   }

@@ -3,7 +3,7 @@
           >
             <div
               style="container-type: inline-size;"
-              class="bg-gray-800 border-2 border-gray-500 hover:border-gray-400 duration-300 z-10 lg:w-[40%] md:w-[60%] w-[70%] p-6 rounded-lg flex flex-col gap-4"
+              class="bg-gray-800 border-2 border-gray-500 hover:border-gray-400 fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] duration-300 z-10 lg:w-[40%] md:w-[60%] w-[70%] p-6 rounded-lg flex flex-col gap-4"
             >
               <h2 class="text-white text-2xl font-bold rationale-regular">Create New Task</h2>
               <input
@@ -14,7 +14,7 @@
               />
               <textarea
                 [(ngModel)]="description"
-                class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                class="bg-gray-600 text-white max-h-[70vh] min-h-[20vh] px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Task description"
               ></textarea>
               <select
@@ -23,13 +23,14 @@
               >
                 <option value="" disabled selected>Select Assignee</option>
                 <option value="">Free</option>
+                @if(store.isOwner()){
                 @for (member of members; track $index) {
-                  @if (store.isOwner()) {
-                    <option [value]="member">{{ member }}</option>
-                  } @else {
-                    <option [value]="store.currentUser()">{{ store.currentUser() }}</option>
-                  }
+                  <option [value]="member">{{ member }}</option>
                 }
+              }
+              @else{
+                <option [value]="store.currentUser()">{{ store.currentUser() }}</option>
+              }
               </select>
               <button
                 (click)="CreateTask()"

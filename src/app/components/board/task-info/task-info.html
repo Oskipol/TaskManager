@@ -1,4 +1,4 @@
-<div style="container-type: inline-size;" class="absolute top-[50%] lg:w-[40%] md:w-[60%] border-2 border-amber-50 w-[70%] z-10 left-[50%] translate-x-[-50%] translate-y-[-50%] bg-gray-800 p-6 rounded-lg">
+<div style="container-type: inline-size;" class="fixed top-[50%] lg:w-[40%] max-h-[95vh] overflow-y-scroll md:w-[60%] border-2 border-amber-50 w-[70%] z-10 left-[50%] translate-x-[-50%] translate-y-[-50%] bg-gray-800 p-6 rounded-lg">
             <button (click)="closed.emit()" class="absolute cursor-pointer top-2 right-2 text-white hover:text-gray-300">
               ✕
             </button>
@@ -6,9 +6,126 @@
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Title:</span> {{selectedTask?.title}}</p>
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Status: </span> <span class="inline-block" [class]="selectedTask?.status=='todo' ? 'text-red-500' : (selectedTask?.status=='in-progress' ? 'text-gray-300' : 'text-green-500')">{{selectedTask?.status}}</span></p>
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Assignee:</span> {{selectedTask?.assignedTo || 'Free'}}</p>
+            @if(selectedTask?.status=="todo"&&store.currentUser()==selectedTask?.assignedTo||selectedTask?.assignedTo==""){
+             <select
+                [(ngModel)]="assignee"
+                class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="" disabled selected>Select Assignee</option>
+                <option value="">Free</option>
+                @if(store.isOwner()){
+                @for (member of members; track $index) {
+                  <option [value]="member">{{ member }}</option>
+                }
+              }
+              @else{
+                <option [value]="store.currentUser()">{{ store.currentUser() }}</option>
+              }
+              </select>
+              <button (click)="UpdateTask()" class="bg-blue-500 hover:bg-blue-700 ml-5 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
+                Update Assignee
+              </button>
+              <br>
+            }
+            
             <span class="font-bold text-white" style="font-size: 7cqi;">Description:</span>
-            <p style="font-size: 6cqi; white-space: pre-wrap;" class="text-gray-300 overflow-scroll max-h-[50vh] bg-gray-700 p-2 rounded-2xl">{{selectedTask?.description}}</p>
-            <button (click)="UpdateTask()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
+            <p style="font-size: 6cqi; white-space: pre-wrap;" class="text-gray-300 overflow-scroll max-h-[30vh] bg-gray-700 p-2 rounded-2xl">{{selectedTask?.description}}</p>
+            @if(selectedTask?.status=="done"){
+              <span class="font-bold text-white" style="font-size: 7cqi;">Note:</span>
+            <p style="font-size: 6cqi; white-space: pre-wrap;" class="text-gray-300 overflow-scroll max-h-[50vh] bg-gray-700 p-2 rounded-2xl">{{selectedTask?.Note}}</p>
+           
+            }
+            @if(selectedTask?.status=="in-progress"&&store.currentUser()==selectedTask?.assignedTo){
+            <textarea
+                [(ngModel)]="note"
+                class="text-white bg-gray-500 w-full mt-3 px-4 py-2 rounded-lg outline-none max-h-[70vh] focus:ring-2 focus:ring-blue-500"
+                placeholder="Task completion note"
+              ></textarea>
+            }
+            <div class="w-full mt-5 flex gap-5 justify-center">
+            @if(selectedTask?.status=="todo"&&store.currentUser()==selectedTask?.assignedTo){
+              <button (click)="ChangeStatus()" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
+                Accept
+              </button>
+            }
+            @if(selectedTask?.status=="in-progress"&&store.currentUser()==selectedTask?.assignedTo){
+              
+              <button (click)="ChangeStatus()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
+                Finish
+              </button>
+            }
+            @if(selectedTask?.status=="done"&&store.isOwner()){
+             <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 text-center px-4 cursor-pointer duration-300 rounded">
+              Delete
+            </button>
+          }
+            @if (selectedTask?.status!="todo"&&store.currentUser()==selectedTask?.assignedTo||store.isOwner()) {
+              <button (click)="UpdateTaskMode.set(true)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
               Update
             </button>
+            }
+            
+            
+            </div>
+            
+</div>
+@if(UpdateTaskMode()) {
+  <div
+            class="absolute top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center"
+          >
+            <div
+              style="container-type: inline-size;"
+              class="bg-gray-800 fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-2 border-gray-500 hover:border-gray-400 duration-300 z-10 lg:w-[40%] md:w-[60%] w-[70%] p-6 rounded-lg flex flex-col gap-4"
+            >
+              <h2 class="text-white text-2xl font-bold rationale-regular">Update Task</h2>
+              <input
+                [disabled]="!store.isOwner()"
+                [(ngModel)]="title"
+                type="text"
+                [ngClass]="store.isOwner() ? 'bg-gray-600' : 'bg-gray-500 cursor-not-allowed opacity-50'"
+                class="text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Task title"
+              />
+              @if(selectedTask?.status=="done"&&store.currentUser()==selectedTask?.assignedTo){
+                <button (click)="ReactivateTask()" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
+                  Reactivate
+                </button>
+              }
+              @if(selectedTask?.status=="in-progress"&&store.currentUser()==selectedTask?.assignedTo){
+                <button (click)="SurrenderTask()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
+                  Surrender
+                </button>
+              }
+               @if (store.isOwner()) {
+                <select
+                [(ngModel)]="status"
+                class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="" disabled selected>Select Status</option>
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+               }
+              <textarea
+                [disabled]="!(store.currentUser()==selectedTask?.assignedTo||store.isOwner())"
+                [(ngModel)]="description"
+                class="text-white bg-gray-500 px-4 py-2 rounded-lg outline-none max-h-[70vh] min-h-[20vh] focus:ring-2 focus:ring-blue-500"
+                placeholder="Task description"
+              ></textarea>
+              <button
+                (click)="UpdateTask()"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded"
+              >
+                Update
+              </button>
+              <button
+                (click)="UpdateTaskMode.set(false)"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
+
+}

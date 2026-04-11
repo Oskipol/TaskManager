@@ -11,6 +11,7 @@ export class BoardStoreService {
   tasks=signal<Task[]>([]);
   members=signal<string[]>([]);
   Leader=signal<string>("");
+  isLeader=signal<boolean>(false);
   owner=signal<string>("");
   currentUser=signal<string>("");
   isOwner = signal<boolean>(false);
@@ -19,14 +20,24 @@ export class BoardStoreService {
   loadBoard(boardId:number){
     this.api.getTasks(boardId).subscribe(tasks=>this.tasks.set(tasks));
     this.api.getMembers(boardId).subscribe(members=>this.members.set(members));
-    this.api.getOwner(boardId).subscribe(owner=>this.owner.set(owner));
-    this.api.getLeader(boardId).subscribe(leader=>this.Leader.set(leader));
-    this.currentUser.set(this.auth.currentUser()?.username??"");
-    const currentUser = this.auth.currentUser();
+    this.api.getOwner(boardId).subscribe(owner=>{
+      this.owner.set(owner);
+      const currentUser = this.auth.currentUser();
     if (currentUser && currentUser.username == this.owner()) {
       this.isOwner.set(true);
     }
     else this.isOwner.set(false);
+    });
+    this.api.getLeader(boardId).subscribe(leader=>{
+      this.Leader.set(leader);
+       const currentUser = this.auth.currentUser();
+    if (currentUser && currentUser.username == this.Leader()) {
+      this.isLeader.set(true);
+    }
+    else this.isLeader.set(false);
+    });
+    this.currentUser.set(this.auth.currentUser()?.username??"");
+    
     this.connectSignalR(boardId);
   }
   private connectSignalR(boardId: number){

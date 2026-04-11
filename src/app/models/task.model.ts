@@ -6,4 +6,5 @@ export interface Task{
     order: number;
     boardId: number;
     assignedTo: string | null;
+    Note: string;
 }
