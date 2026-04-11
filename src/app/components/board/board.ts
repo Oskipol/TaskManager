@@ -95,7 +95,7 @@ import { TaskInfo } from './task-info/task-info';
                       (click)="TaskInfo(task)"
                       style="container-type: inline-size;"
                       [ngClass]="task.status=='todo'?'bg-red-500':task.status=='in-progress'?'bg-gray-700':'bg-green-500'"
-                      class="min-w-[40%] overflow-hidden aspect-5/3 md:min-w-[30%] lg:min-w-[20%] p-4 rounded-lg cursor-grab"
+                      class="min-w-[50%] overflow-hidden aspect-5/3 md:min-w-[30%] lg:min-w-[20%] p-4 rounded-lg cursor-grab"
                       draggable="true"
                       (dragstart)="onDragStart($event, task)"
                     >

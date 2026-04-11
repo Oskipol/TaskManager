@@ -3,6 +3,7 @@ import { Task } from '../../../models/task.model';
 import { BoardStoreService } from '../../../services/board-store';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-task-info',
@@ -35,7 +36,7 @@ export class TaskInfo implements OnInit, OnChanges {
       this.status = '';
     }
   }
-  constructor(public store: BoardStoreService){}
+  constructor(public store: BoardStoreService, private snackBar: MatSnackBar){}
 
     ChangeStatus(){
       if(this.selectedTask?.status=="todo"){
@@ -45,6 +46,9 @@ export class TaskInfo implements OnInit, OnChanges {
       else if(this.selectedTask?.status=="in-progress"&&this.note.trim()!=""){
         this.selectedTask.status="done";
         this.store.updateTask(this.selectedTask);
+      }
+      else if(this.selectedTask?.status=="in-progress"&&this.note.trim()==""){
+        this.snackBar.open("Write completion note before finishing", "Close", {duration: 3000})
       }
     }
       ReactivateTask(){

@@ -40,3 +40,10 @@ option{
     font-family: 'Courier New', Courier, monospace;
     font-weight: 700;
 }
+.mdc-snackbar {
+    background-color: rgb(31 41 55);
+    color: white;
+}
+.mat-mdc-button-persistent-ripple::before {
+    background-color: rgb(55 65 81) !important;
+}
