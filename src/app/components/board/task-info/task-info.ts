@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, signal, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, EventEmitter, Output, signal, Signal, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { Task } from '../../../models/task.model';
 import { BoardStoreService } from '../../../services/board-store';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class TaskInfo implements OnInit, OnChanges {
   @Input() selectedTask!: Task|null;
   @Input() members: string[]=[];
+  @Input() BoardId!: Signal<number>;
   @Output() closed = new EventEmitter<void>();
   UpdateTaskMode = signal<boolean>(false);
   title = '';
@@ -21,11 +22,13 @@ export class TaskInfo implements OnInit, OnChanges {
   note='';
   assignee = '';
   status: Task['status'] | '' = '';
+  points=0;
   ngOnInit(){
     if(this.selectedTask){
       this.title=this.selectedTask.title;
       this.description=this.selectedTask.description;
       this.note=this.selectedTask.note ?? '';
+      this.points=this.selectedTask.points;
     }
   }
   ngOnChanges(changes: SimpleChanges) {
@@ -35,6 +38,7 @@ export class TaskInfo implements OnInit, OnChanges {
       this.note = this.selectedTask.note ?? '';
       this.assignee = this.selectedTask.assignedTo ?? '';
       this.status = '';
+      this.points = this.selectedTask.points;
     }
   }
   constructor(public store: BoardStoreService, private snackBar: MatSnackBar){}
@@ -48,6 +52,9 @@ export class TaskInfo implements OnInit, OnChanges {
     this.selectedTask.status="done";
     this.selectedTask.note = this.note; 
     this.store.updateTask(this.selectedTask);
+  }
+  else{
+    this.snackBar.open("You must provide a note before marking the task as done", "Close", { duration: 3000 });
   }
 }
       ReactivateTask(){
@@ -63,7 +70,9 @@ export class TaskInfo implements OnInit, OnChanges {
         }
        }
        DeleteTask(){
-        console.log(this.selectedTask?.note);
+        this.store.setPoints(this.BoardId(), this.selectedTask?.assignedTo ?? '', this.selectedTask?.points ?? 0);
+        this.store.deleteTask(this.selectedTask?.id ?? 0, this.BoardId());
+        this.closed.emit();
        }
     UpdateTask() {
       
@@ -115,6 +124,8 @@ export class TaskInfo implements OnInit, OnChanges {
   this.selectedTask!.description = this.description;
   this.selectedTask!.note = this.note;
   this.selectedTask!.assignedTo = this.assignee;
+  this.selectedTask!.points = this.points;
+
   this.store.updateTask(this.selectedTask!);
 }
 }

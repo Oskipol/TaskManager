@@ -3,6 +3,7 @@ import { Task } from '../models/task.model';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ApiService } from './api';
 import { AuthService } from './auth';
+import { Board } from '../components/board/board';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class BoardStoreService {
   Name=signal<string>("");
   Code=signal<string>("");
   Supervisors=signal<string[]>([]);
+  Points = signal<{[key: string]: number}>({});
   isSupervisor=signal<boolean>(false);
   currentUser=signal<string>("");
   isOwner = signal<boolean>(false);
@@ -60,7 +62,7 @@ this.api.getSupervisors(boardId).subscribe(supervisors => {
 });
 
     this.currentUser.set(this.auth.currentUser()?.username??"");
-    
+    this.api.getPoints(boardId).subscribe(points => this.Points.set(points));
     this.connectSignalR(boardId);
   }
   private connectSignalR(boardId: number){
@@ -70,6 +72,22 @@ this.api.getSupervisors(boardId).subscribe(supervisors => {
     this.connection.on("taskCreated", (task: Task)=>{
       this.tasks.update(tasks=>[...tasks, task]);
     });
+    this.connection.on("TaskDeleted", (id: number) => {
+  this.tasks.update(tasks => tasks.filter(t => t.id !== id));
+});
+    this.connection.on("RoleChanged", (leaders: string[], supervisors: string[]) => {
+  this.Leaders.set(leaders);
+  this.Supervisors.set(supervisors);
+  const currentUser = this.auth.currentUser();
+  if (currentUser) {
+    this.isLeader.set(leaders.includes(currentUser.username));
+    this.isSupervisor.set(supervisors.includes(currentUser.username));
+  }
+});
+
+this.connection.on("PointsUpdated", (points: {[key: string]: number}) => {
+  this.Points.set(points);
+});
     this.connection.on("taskUpdated", (task:Task)=>{
       this.tasks.update(tasks=>tasks.map(t=>t.id==task.id?task:t));
     });
@@ -83,10 +101,16 @@ this.api.getSupervisors(boardId).subscribe(supervisors => {
   disconnect(){
     this.connection?.stop();
   }
-  createTask(title: string, assignee: string, desc: string, boardId: number){
-    this.api.createTask(title, assignee, desc, boardId).subscribe();
+  createTask(title: string, assignee: string, desc: string, boardId: number, points: number){
+    this.api.createTask(title, assignee, desc, boardId, points).subscribe();
   }
   updateTask(task: Task){
     this.api.updateTask(task).subscribe();
+  }
+  setPoints(boardId: number, username: string, points: number){
+    this.api.setPoints(boardId, username, points).subscribe();
+  }
+  deleteTask(id: number, boardId: number){
+    this.api.deleteTask(id, boardId).subscribe();
   }
 }

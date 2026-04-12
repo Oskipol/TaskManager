@@ -52,6 +52,16 @@ export class ApiService {
       headers: this.headers()
     });
   }
+  getPoints(boardId: number) {
+  return this.http.get<{[key: string]: number}>(`${this.url}/boards/${boardId}/points`, {
+    headers: this.headers()
+  });
+}
+  setPoints(boardId: number, username: string, points: number){
+    return this.http.post(`${this.url}/Boards/${boardId}/points`, {username, points}, {
+      headers: this.headers()
+    });
+  }
   getSupervisors(boardId: number){
     return this.http.get<string[]>(`${this.url}/Boards/${boardId}/supervisors`, {
       headers: this.headers()
@@ -80,8 +90,13 @@ export class ApiService {
       headers: this.headers()
     });
   }
-  createTask(title: string, assignee: string, desc: string, boardId: number){
-    return this.http.post<Task>(`${this.url}/Tasks`, {title, AssignedTo:assignee, description: desc, boardId}, {
+  createTask(title: string, assignee: string, desc: string, boardId: number, points: number){
+    return this.http.post<Task>(`${this.url}/Tasks`, {title, AssignedTo:assignee, description: desc, boardId, Points: points}, {
+      headers: this.headers()
+    });
+  }
+  deleteTask(id: number, boardId: number){
+    return this.http.delete(`${this.url}/Tasks/${id}/${boardId}`, {
       headers: this.headers()
     });
   }
@@ -94,7 +109,8 @@ export class ApiService {
     status: task.status,
     order: task.order,
     boardId: task.boardId,
-    Note: task.note 
+    Note: task.note,
+    Points: task.points
   }, {
     headers: this.headers()
   });

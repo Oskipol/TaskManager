@@ -6,6 +6,7 @@
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Title:</span> {{selectedTask?.title}}</p>
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Status: </span> <span class="inline-block" [class]="selectedTask?.status=='todo' ? 'text-red-500' : (selectedTask?.status=='in-progress' ? 'text-gray-300' : 'text-green-500')">{{selectedTask?.status}}</span></p>
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Assignee:</span> {{selectedTask?.assignedTo || 'Free'}}</p>
+              <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Points:</span> {{selectedTask?.points}}</p>
             @if(selectedTask?.status=="todo"){
   <select
     [(ngModel)]="assignee"

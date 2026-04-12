@@ -17,11 +17,12 @@ export class AddTask {
   title='';
   description='';
   assignee='';
+  points=1;
 
   constructor(public store: BoardStoreService){}
   CreateTask(){
     if(this.title.trim() === '') return;
-    this.store.createTask(this.title, this.assignee, this.description, this.boardId);
+    this.store.createTask(this.title, this.assignee, this.description, this.boardId, this.points);
     this.closed.emit();
   }
 }

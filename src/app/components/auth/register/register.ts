@@ -37,6 +37,18 @@ export class Register {
   register(){
     if(this.password1===this.password2){
       if(this.username&&this.email&&this.password1){
+        if(!this.email.includes("@")){
+          this.error.set("Email is not valid");
+          return;
+        }
+        if(this.password1.length<6){
+          this.error.set("Password must be at least 6 characters long");
+          return;
+        }
+        if(this.username.length<3||this.username.length>20){
+          this.error.set("Username must be between 3 and 20 characters long");
+          return;
+        }
     this.api.register(this.username, this.email, this.password1).subscribe({
       next: res=>{
         this.auth.saveAuth(res.token, {id: 0, username: res.username, email: this.email});

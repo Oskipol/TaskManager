@@ -7,4 +7,5 @@ export interface Task{
     boardId: number;
     assignedTo: string | null;
     note: string| null;
+    points: number;
 }

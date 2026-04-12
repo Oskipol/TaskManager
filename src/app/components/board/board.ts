@@ -38,7 +38,7 @@ import { Settings } from './settings/settings';
             <button class="cursor-pointer hidden md:block">Back</button>
             <div class="h-full aspect-square bg-[url('/arrow.png')] bg-cover bg-center block md:hidden"></div>
           </button>
-          <div class="w-10 aspect-square flex justify-center items-center cursor-pointer" (click)="SettingsMode.set(true)" style="background-image: url('/gear.png'); background-size: cover; background-position: center;" (click)="SettingsMode.set(true)"><div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
+          <div class="w-10 aspect-square flex justify-center items-center cursor-pointer" (click)="SettingsMode.set(true)" style="background-image: url('/gear.png'); background-size: cover; background-position: center;"><div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
         </div>
       </div>
 
@@ -47,7 +47,7 @@ import { Settings } from './settings/settings';
             <app-settings [store]="store" [members]="members()" [BoardId]="boardId" (closed)="SettingsMode.set(false)"></app-settings>
           }
         @if(TaskInfoMode()){
-          <app-task-info [selectedTask]="selectedTask()" [members]="members()" (closed)="TaskInfoMode.set(false)"></app-task-info>
+          <app-task-info [selectedTask]="selectedTask()" [BoardId]="boardId" [members]="members()" (closed)="TaskInfoMode.set(false)"></app-task-info>
         }
         @if (CreateTaskMode()&&(store.isLeader()||store.isOwner()||store.isSupervisor())) {
           <app-add-task [members]="members()" [boardId]="boardId()" (closed)="CreateTaskMode.set(false)"></app-add-task>
@@ -87,13 +87,16 @@ import { Settings } from './settings/settings';
                 (dragover)="onDragOver($event)"
                 (drop)="onDrop($event, member)"
               >
-                <p
+                <div>
+                  <p
                   style="font-size: 8cqi;"
                   class="rationale-regular"
                   [ngClass]="member === store.owner().toString() ? 'text-amber-500' : store.Leaders().includes(member) ? 'text-red-700' : store.Supervisors().includes(member) ? 'text-green-500' : 'text-white'"
                 >
                   {{ member }}
                 </p>
+                <p class="text-white text-center" style="font-size: 2cqi;">Points: {{ store.Points()[member] }}</p>
+                </div>
 
                 @for (task of tasks(); track $index) {
                   @if (task.assignedTo == member) {
@@ -232,6 +235,7 @@ onDropFree(event: DragEvent) {
   this.draggedTask = null;
 }
   onDrop(event: DragEvent, targetMember: string) {
+    console.log(this.draggedTask?.points);
     event.preventDefault();
     if (!this.draggedTask) return;
     if (!this.canDrop(targetMember)) return;
