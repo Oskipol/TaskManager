@@ -85,10 +85,19 @@ export class ApiService {
       headers: this.headers()
     });
   }
-  updateTask(task: Task){
-    return this.http.put<Task>(`${this.url}/Tasks`, task, {
-      headers: this.headers()
-    });
-  }
+  updateTask(task: Task) {
+  return this.http.put<Task>(`${this.url}/Tasks`, {
+    id: task.id,
+    title: task.title,
+    assignedTo: task.assignedTo,
+    description: task.description,
+    status: task.status,
+    order: task.order,
+    boardId: task.boardId,
+    Note: task.note 
+  }, {
+    headers: this.headers()
+  });
+}
   
 }

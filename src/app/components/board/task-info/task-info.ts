@@ -25,13 +25,14 @@ export class TaskInfo implements OnInit, OnChanges {
     if(this.selectedTask){
       this.title=this.selectedTask.title;
       this.description=this.selectedTask.description;
+      this.note=this.selectedTask.note ?? '';
     }
   }
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selectedTask'] && this.selectedTask) {
       this.title = this.selectedTask.title;
       this.description = this.selectedTask.description;
-      this.note = this.selectedTask.Note ?? '';
+      this.note = this.selectedTask.note ?? '';
       this.assignee = this.selectedTask.assignedTo ?? '';
       this.status = '';
     }
@@ -39,18 +40,16 @@ export class TaskInfo implements OnInit, OnChanges {
   constructor(public store: BoardStoreService, private snackBar: MatSnackBar){}
 
     ChangeStatus(){
-      if(this.selectedTask?.status=="todo"){
-        this.selectedTask.status="in-progress";
-        this.store.updateTask(this.selectedTask);
-      }
-      else if(this.selectedTask?.status=="in-progress"&&this.note.trim()!=""){
-        this.selectedTask.status="done";
-        this.store.updateTask(this.selectedTask);
-      }
-      else if(this.selectedTask?.status=="in-progress"&&this.note.trim()==""){
-        this.snackBar.open("Write completion note before finishing", "Close", {duration: 3000})
-      }
-    }
+  if(this.selectedTask?.status=="todo"){
+    this.selectedTask.status="in-progress";
+    this.store.updateTask(this.selectedTask); 
+  }
+  else if(this.selectedTask?.status=="in-progress"&&this.note.trim()!=""){
+    this.selectedTask.status="done";
+    this.selectedTask.note = this.note; 
+    this.store.updateTask(this.selectedTask);
+  }
+}
       ReactivateTask(){
         if(this.selectedTask?.status=="done"){
           this.selectedTask.status="in-progress";
@@ -64,9 +63,10 @@ export class TaskInfo implements OnInit, OnChanges {
         }
        }
        DeleteTask(){
-        console.log(this.selectedTask?.Note);
+        console.log(this.selectedTask?.note);
        }
     UpdateTask() {
+      
   const currentUser = this.store.currentUser();
 
   const isProtected = (user: string) =>
@@ -79,6 +79,7 @@ export class TaskInfo implements OnInit, OnChanges {
     (this.store.Leaders().includes(user) && user !== currentUser);
 
   if (!this.store.isOwner()) {
+    
     if (this.store.isLeader()) {
       if (isLeaderProtected(this.selectedTask?.assignedTo ?? '')) {
         this.snackBar.open("You can't reassign this task", "Close", { duration: 3000 });
@@ -112,7 +113,7 @@ export class TaskInfo implements OnInit, OnChanges {
   if (this.status) { this.selectedTask!.status = this.status as Task['status']; this.status = ''; }
   this.selectedTask!.title = this.title;
   this.selectedTask!.description = this.description;
-  this.selectedTask!.Note = this.note;
+  this.selectedTask!.note = this.note;
   this.selectedTask!.assignedTo = this.assignee;
   this.store.updateTask(this.selectedTask!);
 }

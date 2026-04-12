@@ -15,10 +15,10 @@ import { Settings } from './settings/settings';
   selector: 'app-board',
   imports: [CommonModule, FormsModule, RouterLink, DragDropModule, AddTask, TaskInfo, Settings],
   template: `
-    <div class="w-full h-full inset-0 bg-gray-900 min-h-screen">
+    <div class="w-full h-full inset-0 min-h-screen bg-gray-800">
       <div
         style="container-type: inline-size;"
-        class="relative top-0 left-0 h-[10%] min-h-15 w-full flex justify-between items-center px-[2%]"
+        class="fixed top-0 z-10 left-0 bg-gray-900 h-[10vh] min-h-15 w-full flex justify-between items-center px-[2%]"
       >
         <h1 style="font-size: 5cqi;" class="rationale-regular font-bold text-white">
           Your Board Tasks
@@ -41,8 +41,8 @@ import { Settings } from './settings/settings';
           <div class="w-10 aspect-square flex justify-center items-center cursor-pointer" (click)="SettingsMode.set(true)" style="background-image: url('/gear.png'); background-size: cover; background-position: center;" (click)="SettingsMode.set(true)"><div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
         </div>
       </div>
-      <div></div>
-      <div class="w-full bg-gray-800 relative">
+
+      <div class="w-full mt-[10vh] bg-gray-800 relative">
           @if(SettingsMode()){
             <app-settings [store]="store" [members]="members()" [BoardId]="boardId" (closed)="SettingsMode.set(false)"></app-settings>
           }
@@ -90,7 +90,7 @@ import { Settings } from './settings/settings';
                 <p
                   style="font-size: 8cqi;"
                   class="rationale-regular"
-                  [ngClass]="member === store.owner().toString() ? 'text-amber-500' : store.Leaders().includes(member) ? 'text-green-500' : store.Supervisors().includes(member) ? 'text-blue-500' : 'text-white'"
+                  [ngClass]="member === store.owner().toString() ? 'text-amber-500' : store.Leaders().includes(member) ? 'text-red-700' : store.Supervisors().includes(member) ? 'text-green-500' : 'text-white'"
                 >
                   {{ member }}
                 </p>

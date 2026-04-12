@@ -9,7 +9,7 @@
             <div class="text-gray-300 relative p-[2%] bg-gray-600 rounded-2xl" [ngClass]="Roll() ? 'max-h-[5em] overflow-hidden':'overflow-scroll max-h-[50vh]'">
                 <div (click)="Roll.set(!Roll())" class="absolute w-[10%] right-0 cursor-pointer aspect-square mr-2 bg-[url('/down.png')] bg-center bg-cover" ></div>
                 @for (member of members; track $index) {
-              <p style="font-size: 7cqi;" class="text-gray-300">{{ member }} -- @if(store.owner().toString() === member) { <span class="text-amber-500">Owner</span> } @else if(store.Leaders().includes(member)) { <span class="text-green-500">Leader</span> } @else if(store.Supervisors().includes(member)) { <span class="text-blue-500">Supervisor</span> } @else{Regular User}</p> @if((member !== store.owner().toString())&&(!store.Leaders().includes(member)&&store.Leaders().includes(store.currentUser())||store.isOwner())){<button class="cursor-pointer hover:text-gray-50 duration-300 hover:underline" (click)="RoleAssignMode.set(member)">Change Role</button>}
+              <p style="font-size: 7cqi;" class="text-gray-300">{{ member }} -- @if(store.owner().toString() === member) { <span class="text-amber-500">Owner</span> } @else if(store.Leaders().includes(member)) { <span class="text-red-700">Leader</span> } @else if(store.Supervisors().includes(member)) { <span class="text-green-500">Supervisor</span> } @else{Regular User}</p> @if((member !== store.owner().toString())&&(!store.Leaders().includes(member)&&store.Leaders().includes(store.currentUser())||store.isOwner())){<button class="cursor-pointer hover:text-gray-50 duration-300 hover:underline" (click)="RoleAssignMode.set(member)">Change Role</button>}
               
             }
             

@@ -49,7 +49,7 @@
             <p style="font-size: 6cqi; white-space: pre-wrap;" class="text-gray-300 overflow-scroll max-h-[30vh] bg-gray-700 p-2 rounded-2xl">{{selectedTask?.description}}</p>
             @if(selectedTask?.status=="done"){
               <span class="font-bold text-white" style="font-size: 7cqi;">Note:</span>
-            <p style="font-size: 6cqi; white-space: pre-wrap;" class="text-gray-300 overflow-scroll max-h-[50vh] bg-gray-700 p-2 rounded-2xl">{{selectedTask?.Note}}</p>
+            <p style="font-size: 6cqi; white-space: pre-wrap;" class="text-gray-300 overflow-scroll max-h-[50vh] bg-gray-700 p-2 rounded-2xl">{{selectedTask?.note}}</p>
            
             }
             @if(selectedTask?.status=="in-progress"&&store.currentUser()==selectedTask?.assignedTo){
@@ -71,7 +71,7 @@
                 Finish
               </button>
             }
-            @if(selectedTask?.status=="done"&&store.isOwner()){
+            @if((selectedTask?.status=="done")&&(store.isOwner()||(store.isLeader()&&store.currentUser()!==selectedTask?.assignedTo)||(store.isSupervisor()&&!store.Leaders().includes(selectedTask?.assignedTo||'')&&selectedTask?.assignedTo!==store.currentUser()&&selectedTask?.assignedTo!==store.owner().toString()))) {
              <button (click)="DeleteTask()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 text-center px-4 cursor-pointer duration-300 rounded">
               Delete
             </button>
