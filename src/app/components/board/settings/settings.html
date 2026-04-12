@@ -1,0 +1,36 @@
+<div style="container-type: inline-size;" class="fixed top-[50%] lg:w-[40%] max-h-[95vh] overflow-y-scroll md:w-[60%] border-2 border-amber-50 w-[70%] z-10 left-[50%] translate-x-[-50%] translate-y-[-50%] bg-gray-800 p-6 rounded-lg">
+            <button (click)="closed.emit()" class="absolute cursor-pointer top-2 right-2 text-white hover:text-gray-300">
+              ✕
+            </button>
+            <h2 style="font-size: 10cqi;" class="text-white text-2xl font-bold rationale-regular text-center">Board Settings</h2>
+            <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Board Name: {{store.Name()}}</span></p>
+            <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Board Code: {{store.Code()}}</span></p>
+            <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Users:</span></p>
+            <div class="text-gray-300 relative p-[2%] bg-gray-600 rounded-2xl" [ngClass]="Roll() ? 'max-h-[5em] overflow-hidden':'overflow-scroll max-h-[50vh]'">
+                <div (click)="Roll.set(!Roll())" class="absolute w-[10%] right-0 cursor-pointer aspect-square mr-2 bg-[url('/down.png')] bg-center bg-cover" ></div>
+                @for (member of members; track $index) {
+              <p style="font-size: 7cqi;" class="text-gray-300">{{ member }} -- @if(store.owner().toString() === member) { <span class="text-amber-500">Owner</span> } @else if(store.Leaders().includes(member)) { <span class="text-green-500">Leader</span> } @else if(store.Supervisors().includes(member)) { <span class="text-blue-500">Supervisor</span> } @else{Regular User}</p> @if((member !== store.owner().toString())&&(!store.Leaders().includes(member)&&store.Leaders().includes(store.currentUser())||store.isOwner())){<button class="cursor-pointer hover:text-gray-50 duration-300 hover:underline" (click)="RoleAssignMode.set(member)">Change Role</button>}
+              
+            }
+            
+            </div>
+            @if(RoleAssignMode()){
+                <div class="absolute w-full h-full top-0 left-0 bg-gray-800" style="container-type: inline-size;">
+                    <h3 style="font-size: 10cqi;" class="text-white text-lg text-center mb-4">Assign Role to {{RoleAssignMode()}}</h3>
+                   <div class="w-full top-0 left-0 absolute h-full flex flex-col justify-center items-center gap-5">
+                     <select
+  class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+  (change)="onRoleChange(RoleAssignMode(), $event)"
+>
+  <option value="" disabled selected>Select Role</option>
+  <option value="user">Regular User</option>
+  <option value="supervisor">Supervisor</option>
+  @if(store.isOwner()){<option value="leader">Leader</option>}
+</select>
+                    <button (click)="RoleAssignMode.set('')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded mt-4">
+                      Close
+                    </button>
+                   </div>
+                  </div>
+              }
+</div>

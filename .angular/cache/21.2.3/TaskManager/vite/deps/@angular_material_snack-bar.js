@@ -1,8 +1,4 @@
 import {
-  DomSanitizer
-} from "./chunk-DC3DCPCK.js";
-import "./chunk-HJ6W6FSM.js";
-import {
   BidiModule,
   Directionality,
   Platform,
@@ -20,11 +16,15 @@ import {
   isFakeMousedownFromScreenReader,
   isFakeTouchstartFromScreenReader,
   supportsScrollBehavior
-} from "./chunk-RB6FI3WM.js";
+} from "./chunk-TJLE37R2.js";
+import {
+  DomSanitizer
+} from "./chunk-OLFRSRVX.js";
+import "./chunk-D45W3VTM.js";
 import {
   Location
-} from "./chunk-J5U3L3M6.js";
-import "./chunk-4RLJT2E2.js";
+} from "./chunk-DMRERBB7.js";
+import "./chunk-E4WQZDBC.js";
 import {
   ANIMATION_MODULE_TYPE,
   APP_ID,

@@ -6,27 +6,44 @@
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Title:</span> {{selectedTask?.title}}</p>
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Status: </span> <span class="inline-block" [class]="selectedTask?.status=='todo' ? 'text-red-500' : (selectedTask?.status=='in-progress' ? 'text-gray-300' : 'text-green-500')">{{selectedTask?.status}}</span></p>
             <p style="font-size: 7cqi;" class="text-gray-300"><span class="font-bold">Assignee:</span> {{selectedTask?.assignedTo || 'Free'}}</p>
-            @if(selectedTask?.status=="todo"&&store.currentUser()==selectedTask?.assignedTo||selectedTask?.assignedTo==""){
-             <select
-                [(ngModel)]="assignee"
-                class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="" disabled selected>Select Assignee</option>
-                <option value="">Free</option>
-                @if(store.isOwner()){
-                @for (member of members; track $index) {
-                  <option [value]="member">{{ member }}</option>
-                }
-              }
-              @else{
-                <option [value]="store.currentUser()">{{ store.currentUser() }}</option>
-              }
-              </select>
-              <button (click)="UpdateTask()" class="bg-blue-500 hover:bg-blue-700 ml-5 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
-                Update Assignee
-              </button>
-              <br>
-            }
+            @if(selectedTask?.status=="todo"){
+  <select
+    [(ngModel)]="assignee"
+    class="bg-gray-600 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    <option value="" disabled selected>Select Assignee</option>
+    @if(store.isOwner()) {
+      @for (member of members; track $index) {
+        <option [value]="member">{{ member }}</option>
+      }
+      <option value="">Unassign</option>
+    } @else if(store.isLeader()) {
+      @for (member of members; track $index) {
+        @if(member !== store.owner().toString() && (!store.Leaders().includes(member) || member === store.currentUser())) {
+          <option [value]="member">{{ member }}</option>
+        }
+      }
+      <option value="">Unassign</option>
+    } @else if(store.isSupervisor()) {
+      @for (member of members; track $index) {
+        @if(member !== store.owner().toString() && !store.Leaders().includes(member) && (!store.Supervisors().includes(member) || member === store.currentUser())) {
+          <option [value]="member">{{ member }}</option>
+        }
+      }
+      <option value="">Unassign</option>
+    } @else if(selectedTask?.assignedTo == store.currentUser() || selectedTask?.assignedTo == '') {
+      @if(selectedTask?.assignedTo == '') {
+        <option [value]="store.currentUser()">{{ store.currentUser() }}</option>
+      } @else {
+        <option value="">Unassign</option>
+      }
+    }
+  </select>
+  <button (click)="UpdateTask()" class="bg-blue-500 hover:bg-blue-700 ml-5 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">
+    Update Assignee
+  </button>
+}
+<br>
             
             <span class="font-bold text-white" style="font-size: 7cqi;">Description:</span>
             <p style="font-size: 6cqi; white-space: pre-wrap;" class="text-gray-300 overflow-scroll max-h-[30vh] bg-gray-700 p-2 rounded-2xl">{{selectedTask?.description}}</p>
@@ -55,7 +72,7 @@
               </button>
             }
             @if(selectedTask?.status=="done"&&store.isOwner()){
-             <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 text-center px-4 cursor-pointer duration-300 rounded">
+             <button (click)="DeleteTask()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 text-center px-4 cursor-pointer duration-300 rounded">
               Delete
             </button>
           }

@@ -63,12 +63,57 @@ export class TaskInfo implements OnInit, OnChanges {
           this.store.updateTask(this.selectedTask);
         }
        }
-    UpdateTask(){
-      if(this.status) {this.selectedTask!.status=this.status as Task['status']; this.status='';}
-      this.selectedTask!.title=this.title;
-      this.selectedTask!.description=this.description;
-      this.selectedTask!.Note=this.note;
-      this.selectedTask!.assignedTo=this.assignee;
-      this.store.updateTask(this.selectedTask!);
+       DeleteTask(){
+        console.log(this.selectedTask?.Note);
+       }
+    UpdateTask() {
+  const currentUser = this.store.currentUser();
+
+  const isProtected = (user: string) =>
+    user === this.store.owner().toString() ||
+    (this.store.Leaders().includes(user) && user !== currentUser) ||
+    (this.store.Supervisors().includes(user) && user !== currentUser);
+
+  const isLeaderProtected = (user: string) =>
+    user === this.store.owner().toString() ||
+    (this.store.Leaders().includes(user) && user !== currentUser);
+
+  if (!this.store.isOwner()) {
+    if (this.store.isLeader()) {
+      if (isLeaderProtected(this.selectedTask?.assignedTo ?? '')) {
+        this.snackBar.open("You can't reassign this task", "Close", { duration: 3000 });
+        return;
+      }
+      if (this.assignee !== '' && isLeaderProtected(this.assignee)) {
+        this.snackBar.open("You can't assign to this user", "Close", { duration: 3000 });
+        return;
+      }
+    } else if (this.store.isSupervisor()) {
+      if (isProtected(this.selectedTask?.assignedTo ?? '')) {
+        this.snackBar.open("You can't reassign this task", "Close", { duration: 3000 });
+        return;
+      }
+      if (this.assignee !== '' && isProtected(this.assignee)) {
+        this.snackBar.open("You can't assign to this user", "Close", { duration: 3000 });
+        return;
+      }
+    } else {
+      if (isProtected(this.selectedTask?.assignedTo ?? '')) {
+        this.snackBar.open("You can't reassign this task", "Close", { duration: 3000 });
+        return;
+      }
+      if (this.assignee !== '' && this.assignee !== currentUser) {
+        this.snackBar.open("You can only assign to yourself", "Close", { duration: 3000 });
+        return;
+      }
     }
+  }
+
+  if (this.status) { this.selectedTask!.status = this.status as Task['status']; this.status = ''; }
+  this.selectedTask!.title = this.title;
+  this.selectedTask!.description = this.description;
+  this.selectedTask!.Note = this.note;
+  this.selectedTask!.assignedTo = this.assignee;
+  this.store.updateTask(this.selectedTask!);
+}
 }

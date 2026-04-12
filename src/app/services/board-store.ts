@@ -10,14 +10,25 @@ import { AuthService } from './auth';
 export class BoardStoreService {
   tasks=signal<Task[]>([]);
   members=signal<string[]>([]);
-  Leader=signal<string>("");
+  Leaders=signal<string[]>([]);
   isLeader=signal<boolean>(false);
   owner=signal<string>("");
+  Name=signal<string>("");
+  Code=signal<string>("");
+  Supervisors=signal<string[]>([]);
+  isSupervisor=signal<boolean>(false);
   currentUser=signal<string>("");
   isOwner = signal<boolean>(false);
-  private connection: HubConnection |null=null;
+  private connection: HubConnection|null=null;
   constructor(private api: ApiService, private auth: AuthService){}
   loadBoard(boardId:number){
+    this.api.getBoards().subscribe(boards=>{
+      const board = boards.find(b => b.id === boardId);
+      if (board) {
+        this.Name.set(board.name);
+        this.Code.set(board.code);
+      }
+    })
     this.api.getTasks(boardId).subscribe(tasks=>this.tasks.set(tasks));
     this.api.getMembers(boardId).subscribe(members=>this.members.set(members));
     this.api.getOwner(boardId).subscribe(owner=>{
@@ -28,14 +39,26 @@ export class BoardStoreService {
     }
     else this.isOwner.set(false);
     });
-    this.api.getLeader(boardId).subscribe(leader=>{
-      this.Leader.set(leader);
-       const currentUser = this.auth.currentUser();
-    if (currentUser && currentUser.username == this.Leader()) {
-      this.isLeader.set(true);
-    }
-    else this.isLeader.set(false);
-    });
+    this.api.getLeaders(boardId).subscribe(leaders => {
+  this.Leaders.set(leaders);
+  const currentUser = this.auth.currentUser();
+  if (currentUser && leaders.includes(currentUser.username)) {
+    this.isLeader.set(true);
+  } else {
+    this.isLeader.set(false);
+  }
+});
+
+this.api.getSupervisors(boardId).subscribe(supervisors => {
+  this.Supervisors.set(supervisors);
+  const currentUser = this.auth.currentUser();
+  if (currentUser && supervisors.includes(currentUser.username)) {
+    this.isSupervisor.set(true);
+  } else {
+    this.isSupervisor.set(false);
+  }
+});
+
     this.currentUser.set(this.auth.currentUser()?.username??"");
     
     this.connectSignalR(boardId);
@@ -53,6 +76,9 @@ export class BoardStoreService {
     this.connection.start().then(()=>{
       this.connection!.invoke("JoinBoard", boardId.toString());
     });
+  }
+  changeRole(boardId: number, username: string, role: string){
+    this.api.changeRole(boardId, username, role).subscribe();
   }
   disconnect(){
     this.connection?.stop();

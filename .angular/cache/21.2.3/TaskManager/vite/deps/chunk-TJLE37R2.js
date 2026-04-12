@@ -1,6 +1,6 @@
 import {
   isPlatformBrowser
-} from "./chunk-J5U3L3M6.js";
+} from "./chunk-DMRERBB7.js";
 import {
   APP_ID,
   ApplicationRef,
@@ -79,101 +79,6 @@ import {
   __spreadValues
 } from "./chunk-XSXJULYR.js";
 
-// node_modules/@angular/cdk/fesm2022/_fake-event-detection-chunk.mjs
-function isFakeMousedownFromScreenReader(event) {
-  return event.buttons === 0 || event.detail === 0;
-}
-function isFakeTouchstartFromScreenReader(event) {
-  const touch = event.touches && event.touches[0] || event.changedTouches && event.changedTouches[0];
-  return !!touch && touch.identifier === -1 && (touch.radiusX == null || touch.radiusX === 1) && (touch.radiusY == null || touch.radiusY === 1);
-}
-
-// node_modules/@angular/cdk/fesm2022/_shadow-dom-chunk.mjs
-var shadowDomIsSupported;
-function _supportsShadowDom() {
-  if (shadowDomIsSupported == null) {
-    const head = typeof document !== "undefined" ? document.head : null;
-    shadowDomIsSupported = !!(head && (head.createShadowRoot || head.attachShadow));
-  }
-  return shadowDomIsSupported;
-}
-function _getShadowRoot(element) {
-  if (_supportsShadowDom()) {
-    const rootNode = element.getRootNode ? element.getRootNode() : null;
-    if (typeof ShadowRoot !== "undefined" && ShadowRoot && rootNode instanceof ShadowRoot) {
-      return rootNode;
-    }
-  }
-  return null;
-}
-function _getFocusedElementPierceShadowDom() {
-  let activeElement = typeof document !== "undefined" && document ? document.activeElement : null;
-  while (activeElement && activeElement.shadowRoot) {
-    const newActiveElement = activeElement.shadowRoot.activeElement;
-    if (newActiveElement === activeElement) {
-      break;
-    } else {
-      activeElement = newActiveElement;
-    }
-  }
-  return activeElement;
-}
-function _getEventTarget(event) {
-  return event.composedPath ? event.composedPath()[0] : event.target;
-}
-
-// node_modules/@angular/cdk/fesm2022/_platform-chunk.mjs
-var hasV8BreakIterator;
-try {
-  hasV8BreakIterator = typeof Intl !== "undefined" && Intl.v8BreakIterator;
-} catch {
-  hasV8BreakIterator = false;
-}
-var Platform = class _Platform {
-  _platformId = inject(PLATFORM_ID);
-  isBrowser = this._platformId ? isPlatformBrowser(this._platformId) : typeof document === "object" && !!document;
-  EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
-  TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
-  BLINK = this.isBrowser && !!(window.chrome || hasV8BreakIterator) && typeof CSS !== "undefined" && !this.EDGE && !this.TRIDENT;
-  WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
-  IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
-  FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
-  ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
-  SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
-  constructor() {
-  }
-  static ɵfac = function Platform_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _Platform)();
-  };
-  static ɵprov = ɵɵdefineInjectable({
-    token: _Platform,
-    factory: _Platform.ɵfac,
-    providedIn: "root"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Platform, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [], null);
-})();
-
-// node_modules/@angular/cdk/fesm2022/_element-chunk.mjs
-function coerceNumberProperty(value, fallbackValue = 0) {
-  if (_isNumberValue(value)) {
-    return Number(value);
-  }
-  return arguments.length === 2 ? fallbackValue : 0;
-}
-function _isNumberValue(value) {
-  return !isNaN(parseFloat(value)) && !isNaN(Number(value));
-}
-function coerceElement(elementOrRef) {
-  return elementOrRef instanceof ElementRef ? elementOrRef.nativeElement : elementOrRef;
-}
-
 // node_modules/@angular/cdk/fesm2022/_style-loader-chunk.mjs
 var appsWithLoaders = /* @__PURE__ */ new WeakMap();
 var _CdkPrivateStyleLoader = class __CdkPrivateStyleLoader {
@@ -219,41 +124,99 @@ var _CdkPrivateStyleLoader = class __CdkPrivateStyleLoader {
   }], null, null);
 })();
 
-// node_modules/@angular/cdk/fesm2022/_array-chunk.mjs
-function coerceArray(value) {
-  return Array.isArray(value) ? value : [value];
+// node_modules/@angular/cdk/fesm2022/_shadow-dom-chunk.mjs
+var shadowDomIsSupported;
+function _supportsShadowDom() {
+  if (shadowDomIsSupported == null) {
+    const head = typeof document !== "undefined" ? document.head : null;
+    shadowDomIsSupported = !!(head && (head.createShadowRoot || head.attachShadow));
+  }
+  return shadowDomIsSupported;
+}
+function _getShadowRoot(element) {
+  if (_supportsShadowDom()) {
+    const rootNode = element.getRootNode ? element.getRootNode() : null;
+    if (typeof ShadowRoot !== "undefined" && ShadowRoot && rootNode instanceof ShadowRoot) {
+      return rootNode;
+    }
+  }
+  return null;
+}
+function _getFocusedElementPierceShadowDom() {
+  let activeElement = typeof document !== "undefined" && document ? document.activeElement : null;
+  while (activeElement && activeElement.shadowRoot) {
+    const newActiveElement = activeElement.shadowRoot.activeElement;
+    if (newActiveElement === activeElement) {
+      break;
+    } else {
+      activeElement = newActiveElement;
+    }
+  }
+  return activeElement;
+}
+function _getEventTarget(event) {
+  return event.composedPath ? event.composedPath()[0] : event.target;
 }
 
-// node_modules/@angular/cdk/fesm2022/_id-generator-chunk.mjs
-var counters = {};
-var _IdGenerator = class __IdGenerator {
-  _appId = inject(APP_ID);
-  static _infix = `a${Math.floor(Math.random() * 1e5).toString()}`;
-  getId(prefix, randomize = false) {
-    if (this._appId !== "ng") {
-      prefix += this._appId;
-    }
-    if (!counters.hasOwnProperty(prefix)) {
-      counters[prefix] = 0;
-    }
-    return `${prefix}${randomize ? __IdGenerator._infix + "-" : ""}${counters[prefix]++}`;
+// node_modules/@angular/cdk/fesm2022/_fake-event-detection-chunk.mjs
+function isFakeMousedownFromScreenReader(event) {
+  return event.buttons === 0 || event.detail === 0;
+}
+function isFakeTouchstartFromScreenReader(event) {
+  const touch = event.touches && event.touches[0] || event.changedTouches && event.changedTouches[0];
+  return !!touch && touch.identifier === -1 && (touch.radiusX == null || touch.radiusX === 1) && (touch.radiusY == null || touch.radiusY === 1);
+}
+
+// node_modules/@angular/cdk/fesm2022/_element-chunk.mjs
+function coerceNumberProperty(value, fallbackValue = 0) {
+  if (_isNumberValue(value)) {
+    return Number(value);
   }
-  static ɵfac = function _IdGenerator_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || __IdGenerator)();
+  return arguments.length === 2 ? fallbackValue : 0;
+}
+function _isNumberValue(value) {
+  return !isNaN(parseFloat(value)) && !isNaN(Number(value));
+}
+function coerceElement(elementOrRef) {
+  return elementOrRef instanceof ElementRef ? elementOrRef.nativeElement : elementOrRef;
+}
+
+// node_modules/@angular/cdk/fesm2022/_platform-chunk.mjs
+var hasV8BreakIterator;
+try {
+  hasV8BreakIterator = typeof Intl !== "undefined" && Intl.v8BreakIterator;
+} catch {
+  hasV8BreakIterator = false;
+}
+var Platform = class _Platform {
+  _platformId = inject(PLATFORM_ID);
+  isBrowser = this._platformId ? isPlatformBrowser(this._platformId) : typeof document === "object" && !!document;
+  EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
+  TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
+  BLINK = this.isBrowser && !!(window.chrome || hasV8BreakIterator) && typeof CSS !== "undefined" && !this.EDGE && !this.TRIDENT;
+  WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
+  IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
+  FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
+  ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
+  SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
+  constructor() {
+  }
+  static ɵfac = function Platform_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _Platform)();
   };
   static ɵprov = ɵɵdefineInjectable({
-    token: __IdGenerator,
-    factory: __IdGenerator.ɵfac,
+    token: _Platform,
+    factory: _Platform.ɵfac,
     providedIn: "root"
   });
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(_IdGenerator, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Platform, [{
     type: Injectable,
     args: [{
       providedIn: "root"
     }]
-  }], null, null);
+  }], () => [], null);
 })();
 
 // node_modules/@angular/cdk/fesm2022/_directionality-chunk.mjs
@@ -1796,18 +1759,53 @@ var ScrollingModule = class _ScrollingModule {
   }], null, null);
 })();
 
+// node_modules/@angular/cdk/fesm2022/_id-generator-chunk.mjs
+var counters = {};
+var _IdGenerator = class __IdGenerator {
+  _appId = inject(APP_ID);
+  static _infix = `a${Math.floor(Math.random() * 1e5).toString()}`;
+  getId(prefix, randomize = false) {
+    if (this._appId !== "ng") {
+      prefix += this._appId;
+    }
+    if (!counters.hasOwnProperty(prefix)) {
+      counters[prefix] = 0;
+    }
+    return `${prefix}${randomize ? __IdGenerator._infix + "-" : ""}${counters[prefix]++}`;
+  }
+  static ɵfac = function _IdGenerator_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || __IdGenerator)();
+  };
+  static ɵprov = ɵɵdefineInjectable({
+    token: __IdGenerator,
+    factory: __IdGenerator.ɵfac,
+    providedIn: "root"
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(_IdGenerator, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], null, null);
+})();
+
+// node_modules/@angular/cdk/fesm2022/_array-chunk.mjs
+function coerceArray(value) {
+  return Array.isArray(value) ? value : [value];
+}
+
 export {
-  isFakeMousedownFromScreenReader,
-  isFakeTouchstartFromScreenReader,
+  _CdkPrivateStyleLoader,
   _getShadowRoot,
   _getFocusedElementPierceShadowDom,
   _getEventTarget,
-  Platform,
+  isFakeMousedownFromScreenReader,
+  isFakeTouchstartFromScreenReader,
   coerceNumberProperty,
   coerceElement,
-  _CdkPrivateStyleLoader,
-  coerceArray,
-  _IdGenerator,
+  Platform,
   Directionality,
   supportsScrollBehavior,
   BidiModule,
@@ -1815,6 +1813,8 @@ export {
   CdkScrollable,
   ViewportRuler,
   CdkScrollableModule,
-  ScrollingModule
+  ScrollingModule,
+  _IdGenerator,
+  coerceArray
 };
-//# sourceMappingURL=chunk-RB6FI3WM.js.map
+//# sourceMappingURL=chunk-TJLE37R2.js.map

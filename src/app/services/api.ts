@@ -46,16 +46,25 @@ export class ApiService {
       headers: this.headers()
     });
   }
-  setLeader(boardId: number, userId: number){
-    return this.http.post(`${this.url}/Boards/${boardId}/leader`, {userId}, {
+
+  getLeaders(boardId: number){
+    return this.http.get<string[]>(`${this.url}/Boards/${boardId}/leaders`, {
       headers: this.headers()
     });
   }
-  getLeader(boardId: number){
-    return this.http.get<string>(`${this.url}/Boards/${boardId}/leader`, {
+  getSupervisors(boardId: number){
+    return this.http.get<string[]>(`${this.url}/Boards/${boardId}/supervisors`, {
       headers: this.headers()
     });
   }
+
+  changeRole(boardId: number, username: string, role: string) {
+  return this.http.post(`${this.url}/boards/${boardId}/changeRole`,
+    { username, role }, 
+    { headers: this.headers() }
+  );
+  }
+
   getMembers(boardId: number){
     return this.http.get<string[]>(`${this.url}/Boards/${boardId}`, {
       headers: this.headers()
@@ -76,8 +85,8 @@ export class ApiService {
       headers: this.headers()
     });
   }
-  updateTask(taks: Task){
-    return this.http.put<Task>(`${this.url}/Tasks`, taks, {
+  updateTask(task: Task){
+    return this.http.put<Task>(`${this.url}/Tasks`, task, {
       headers: this.headers()
     });
   }

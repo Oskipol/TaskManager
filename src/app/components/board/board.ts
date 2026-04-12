@@ -8,11 +8,12 @@ import { Router, RouterLink } from '@angular/router';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import {AddTask} from './add-task/add-task';
 import { TaskInfo } from './task-info/task-info';
+import { Settings } from './settings/settings';
 
 
 @Component({
   selector: 'app-board',
-  imports: [CommonModule, FormsModule, RouterLink, DragDropModule, AddTask, TaskInfo],
+  imports: [CommonModule, FormsModule, RouterLink, DragDropModule, AddTask, TaskInfo, Settings],
   template: `
     <div class="w-full h-full inset-0 bg-gray-900 min-h-screen">
       <div
@@ -25,25 +26,30 @@ import { TaskInfo } from './task-info/task-info';
         <div class="flex gap-5">
           <button
             (click)="CreateTaskMode.set(true)"
-            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded"
+            class="bg-green-500 flex justify-center items-center hover:bg-green-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded"
           >
-            Add Task
+            <button class="cursor-pointer hidden md:block">Add Task</button>
+            <div class="h-full aspect-square bg-[url('/plus.png')] bg-cover bg-center block md:hidden"></div>
           </button>
           <button
             routerLink="/dashboard"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded"
+            class="bg-blue-500 flex justify-center items-center hover:bg-blue-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded"
           >
-            Back
+            <button class="cursor-pointer hidden md:block">Back</button>
+            <div class="h-full aspect-square bg-[url('/arrow.png')] bg-cover bg-center block md:hidden"></div>
           </button>
-          <div class="w-10 aspect-square cursor-pointer" style="background-image: url('setting.png'); background-size: cover; background-position: center;"></div>
+          <div class="w-10 aspect-square flex justify-center items-center cursor-pointer" (click)="SettingsMode.set(true)" style="background-image: url('/gear.png'); background-size: cover; background-position: center;" (click)="SettingsMode.set(true)"><div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
         </div>
       </div>
       <div></div>
       <div class="w-full bg-gray-800 relative">
+          @if(SettingsMode()){
+            <app-settings [store]="store" [members]="members()" [BoardId]="boardId" (closed)="SettingsMode.set(false)"></app-settings>
+          }
         @if(TaskInfoMode()){
           <app-task-info [selectedTask]="selectedTask()" [members]="members()" (closed)="TaskInfoMode.set(false)"></app-task-info>
         }
-        @if (CreateTaskMode()) {
+        @if (CreateTaskMode()&&(store.isLeader()||store.isOwner()||store.isSupervisor())) {
           <app-add-task [members]="members()" [boardId]="boardId()" (closed)="CreateTaskMode.set(false)"></app-add-task>
         }
         <div class="p-6">
@@ -84,7 +90,7 @@ import { TaskInfo } from './task-info/task-info';
                 <p
                   style="font-size: 8cqi;"
                   class="rationale-regular"
-                  [ngClass]="member === store.owner().toString() ? 'text-amber-500' : store.Leader() === member ? 'text-green-500' : 'text-white'"
+                  [ngClass]="member === store.owner().toString() ? 'text-amber-500' : store.Leaders().includes(member) ? 'text-green-500' : store.Supervisors().includes(member) ? 'text-blue-500' : 'text-white'"
                 >
                   {{ member }}
                 </p>
@@ -118,6 +124,7 @@ import { TaskInfo } from './task-info/task-info';
   `,
 })
 export class Board implements OnInit, OnDestroy {
+  SettingsMode = signal<boolean>(false);
   tasks = signal<Task[]>([]);
   members = signal<string[]>([]);
   CreateTaskMode = signal<boolean>(false);
@@ -152,30 +159,84 @@ export class Board implements OnInit, OnDestroy {
     event.preventDefault();
   }
 
-  canDrop(targetMember: string): boolean {
-    const currentUser = this.store.currentUser();
-    if (this.store.isOwner()) return true; 
-    if (this.draggedTask?.assignedTo !== '') return false; 
-    if(this.draggedTask?.status=="done"||this.draggedTask?.status=="in-progress") return false;
+ canDrop(targetMember: string): boolean {
+  const currentUser = this.store.currentUser();
+  if (this.store.isOwner()) return true;
+  if (this.draggedTask?.status == "done" || this.draggedTask?.status == "in-progress") return false;
 
-    return targetMember === currentUser;
+  const draggedFrom = this.draggedTask?.assignedTo ?? '';
+
+  const isProtected = (user: string) =>
+    user === this.store.owner().toString() ||
+    (this.store.Leaders().includes(user) && user !== currentUser) ||
+    (this.store.Supervisors().includes(user) && user !== currentUser);
+
+  const isLeaderProtected = (user: string) =>
+    user === this.store.owner().toString() ||
+    (this.store.Leaders().includes(user) && user !== currentUser);
+
+  if (this.store.isLeader()) {
+    if (isLeaderProtected(targetMember)) return false;
+    if (draggedFrom !== '' && isLeaderProtected(draggedFrom)) return false;
+    return true;
   }
 
+  if (this.store.isSupervisor()) {
+    if (isProtected(targetMember)) return false;
+    if (draggedFrom !== '' && isProtected(draggedFrom)) return false;
+    return true;
+  }
+
+  if (draggedFrom !== '') return false;
+  return targetMember === currentUser;
+}
+
+onDropFree(event: DragEvent) {
+  event.preventDefault();
+  if (!this.draggedTask) return;
+  const currentUser = this.store.currentUser();
+  if (this.draggedTask.status == "done" || this.draggedTask.status == "in-progress") return;
+
+  if (this.store.isOwner()) {
+    this.store.updateTask({ ...this.draggedTask, assignedTo: '' });
+    this.draggedTask = null;
+    return;
+  }
+
+  const draggedFrom = this.draggedTask.assignedTo ?? '';
+
+  const isLeaderProtected = (user: string) =>
+    user === this.store.owner().toString() ||
+    (this.store.Leaders().includes(user) && user !== currentUser);
+
+  const isProtected = (user: string) =>
+    isLeaderProtected(user) ||
+    (this.store.Supervisors().includes(user) && user !== currentUser);
+
+  if (this.store.isLeader()) {
+    if (isLeaderProtected(draggedFrom)) return;
+    this.store.updateTask({ ...this.draggedTask, assignedTo: '' });
+    this.draggedTask = null;
+    return;
+  }
+
+  if (this.store.isSupervisor()) {
+    if (isProtected(draggedFrom)) return;
+    this.store.updateTask({ ...this.draggedTask, assignedTo: '' });
+    this.draggedTask = null;
+    return;
+  }
+
+  if (draggedFrom !== currentUser) return;
+  this.store.updateTask({ ...this.draggedTask, assignedTo: '' });
+  this.draggedTask = null;
+}
   onDrop(event: DragEvent, targetMember: string) {
     event.preventDefault();
     if (!this.draggedTask) return;
     if (!this.canDrop(targetMember)) return;
 
     this.store.updateTask({ ...this.draggedTask, assignedTo: targetMember });
-    this.draggedTask = null;
-  }
-
-  onDropFree(event: DragEvent) {
-    event.preventDefault();
-    if (!this.draggedTask) return;
-    if (!this.store.isOwner() && this.draggedTask.assignedTo !== this.store.currentUser()) return;
-    if(this.draggedTask.status=="done"||this.draggedTask.status=="in-progress") return;
-    this.store.updateTask({ ...this.draggedTask, assignedTo: '' });
     this.draggedTask = null;
   }
 }
