@@ -115,5 +115,10 @@ export class ApiService {
     headers: this.headers()
   });
 }
+  getUserTasks(username: string){
+    return this.http.get<Task[]>(`${this.url}/Tasks/user/${username}`, {
+      headers: this.headers()
+    });
+  }
   
 }

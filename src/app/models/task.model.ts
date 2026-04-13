@@ -8,4 +8,5 @@ export interface Task{
     assignedTo: string | null;
     note: string| null;
     points: number;
+    dueDate: Date | null;
 }
