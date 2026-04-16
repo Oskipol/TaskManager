@@ -3,7 +3,7 @@
           >
             <div
               style="container-type: inline-size;"
-              class="bg-gray-800 border-2 border-gray-500 hover:border-gray-400 fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] duration-300 z-10 lg:w-[40%] md:w-[60%] w-[70%] p-6 rounded-lg flex flex-col gap-4"
+              class="bg-gray-800 border-2 border-gray-500 hover:border-gray-400 fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] duration-300 z-10 lg:w-[40%] md:w-[60%] w-[80%] p-6 rounded-lg flex flex-col gap-4"
             >
               <h2 class="text-white text-2xl font-bold rationale-regular">Create New Task</h2>
               <input
@@ -17,6 +17,7 @@
                 class="bg-gray-600 text-white max-h-[70vh] min-h-[20vh] px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Task description"
               ></textarea>
+              <div class="flex gap-5 w-full relative items-center"><span class="text-white" style="font-size: 5cqi;">Due Date: </span><input type="datetime-local" [(ngModel)]="dueDate" class="bg-gray-600 text-white px-4 py-2 rounded-lg w-[70%] outline-none focus:ring-2 focus:ring-blue-500" /></div>
               <div class="flex gap-5 w-full relative items-center"><span class="text-white" style="font-size: 5cqi;">Points: </span><input type="number" min="1" [max]="store.isOwner()?1000000000:(store.isLeader()?10:5)" [(ngModel)]="points" class="bg-gray-600 text-white px-4 py-2 rounded-lg w-[70%] outline-none focus:ring-2 focus:ring-blue-500" placeholder="Points"/></div>
              <select
     [(ngModel)]="assignee"

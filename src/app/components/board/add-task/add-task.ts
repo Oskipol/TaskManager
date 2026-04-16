@@ -18,11 +18,12 @@ export class AddTask {
   description='';
   assignee='';
   points=1;
+  dueDate: Date | null = null;
 
   constructor(public store: BoardStoreService){}
   CreateTask(){
     if(this.title.trim() === '') return;
-    this.store.createTask(this.title, this.assignee, this.description, this.boardId, this.points);
+    this.store.createTask(this.title, this.assignee, this.description, this.boardId, this.points, this.dueDate, this.store.currentUser());
     this.closed.emit();
   }
 }

@@ -502,7 +502,7 @@ import {
   ɵɵvalidateAttribute,
   ɵɵviewQuery,
   ɵɵviewQuerySignal
-} from "./chunk-5XBNNPIY.js";
+} from "./chunk-MYJ6IZ7W.js";
 import "./chunk-XSXJULYR.js";
 export {
   ANIMATION_MODULE_TYPE,

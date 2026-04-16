@@ -87,15 +87,15 @@ import { Settings } from './settings/settings';
                 (dragover)="onDragOver($event)"
                 (drop)="onDrop($event, member)"
               >
-                <div>
+                <div class="min-w-[20vw] max-w-[35vw] inline-block">
                   <p
-                  style="font-size: 8cqi;"
-                  class="rationale-regular"
+                  style="font-size: 5cqi;"
+                  class="rationale-regular wrap-break-word  text-center font-bold"
                   [ngClass]="member === store.owner().toString() ? 'text-amber-500' : store.Leaders().includes(member) ? 'text-red-700' : store.Supervisors().includes(member) ? 'text-green-500' : 'text-white'"
                 >
                   {{ member }}
                 </p>
-                <p class="text-white text-center" style="font-size: 2cqi;">Points: {{ store.Points()[member] }}</p>
+                <p class="text-white text-center" style="font-size: 2.5cqi;">Points: {{ store.Points()[member] }}</p>
                 </div>
 
                 @for (task of tasks(); track $index) {

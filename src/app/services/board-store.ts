@@ -66,7 +66,7 @@ this.api.getSupervisors(boardId).subscribe(supervisors => {
     this.connectSignalR(boardId);
   }
   private connectSignalR(boardId: number){
-    this.connection=new HubConnectionBuilder().withUrl("http://localhost:5294/taskHub", {
+    this.connection=new HubConnectionBuilder().withUrl("http://192.168.0.25:5294/taskHub", {
       accessTokenFactory: ()=>this.auth.getToken()??""
     }).withAutomaticReconnect().build();
     this.connection.on("taskCreated", (task: Task)=>{
@@ -101,8 +101,8 @@ this.connection.on("PointsUpdated", (points: {[key: string]: number}) => {
   disconnect(){
     this.connection?.stop();
   }
-  createTask(title: string, assignee: string, desc: string, boardId: number, points: number){
-    this.api.createTask(title, assignee, desc, boardId, points).subscribe();
+  createTask(title: string, assignee: string, desc: string, boardId: number, points: number, dueDate: Date | null, CreatedBy: string){
+    this.api.createTask(title, assignee, desc, boardId, points, dueDate, CreatedBy).subscribe();
   }
   updateTask(task: Task){
     this.api.updateTask(task).subscribe();

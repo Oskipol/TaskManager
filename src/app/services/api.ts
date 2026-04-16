@@ -11,7 +11,7 @@ import { Board } from '../models/board.model';
 
 export class ApiService {
   
-  private url="http://localhost:5294/api";
+  private url="http://192.168.0.25:5294/api";
   constructor(private http: HttpClient, private auth: AuthService){}
 
   private headers(){
@@ -81,17 +81,18 @@ export class ApiService {
     });
   }
   getOwner(boardId: number){
-    return this.http.get<string>(`${this.url}/Boards/${boardId}/owner`, {
-      headers: this.headers()
-    });
-  }
+  return this.http.get(`${this.url}/Boards/${boardId}/owner`, {
+    headers: this.headers(),
+    responseType: 'text'
+  });
+}
   getTasks(id: number ){
     return this.http.get<Task[]>(`${this.url}/Tasks/${id}`, {
       headers: this.headers()
     });
   }
-  createTask(title: string, assignee: string, desc: string, boardId: number, points: number){
-    return this.http.post<Task>(`${this.url}/Tasks`, {title, AssignedTo:assignee, description: desc, boardId, Points: points}, {
+  createTask(title: string, assignee: string, desc: string, boardId: number, points: number, dueDate: Date | null, CreatedBy: string){
+    return this.http.post<Task>(`${this.url}/Tasks`, {title, AssignedTo:assignee, description: desc, boardId, Points: points, DueDate: dueDate, CreatedBy}, {
       headers: this.headers()
     });
   }
@@ -110,7 +111,8 @@ export class ApiService {
     order: task.order,
     boardId: task.boardId,
     Note: task.note,
-    Points: task.points
+    Points: task.points,
+    DueDate: task.dueDate
   }, {
     headers: this.headers()
   });
