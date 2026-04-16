@@ -11,7 +11,7 @@ import { Board } from '../models/board.model';
 
 export class ApiService {
   
-  private url="http://192.168.0.25:5294/api";
+  private url="http://localhost:5294/api";
   constructor(private http: HttpClient, private auth: AuthService){}
 
   private headers(){
