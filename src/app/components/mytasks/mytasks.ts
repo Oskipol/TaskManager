@@ -4,15 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api';
 import { Task } from '../../models/task.model';
 import { NgClass } from "@angular/common";
-
+import { TaskInfo2 } from './task-info2/task-info2';
 
 @Component({
   selector: 'app-mytasks',
-  imports: [RouterLink, NgClass],
+  imports: [RouterLink, NgClass, FormsModule, TaskInfo2],
   templateUrl: './mytasks.html',
   styles: ``,
 })
 export class Mytasks implements OnInit {
+  selectedTask = signal<Task | null>(null);
+  TaskInfoMode = signal<boolean>(false);
   boards: any[] = [];
   constructor(private api: ApiService) {}
   tasks=signal<Task[]>([]);
@@ -30,6 +32,10 @@ export class Mytasks implements OnInit {
     this.tasks.set(sorted);
   });
 }
+ TaskInfo(task: Task){
+    this.TaskInfoMode.set(true);
+    this.selectedTask.set(task);
+  }
   giveDate(task: Task):string|null{
     let dueTime=new Date(String(task?.dueDate));
     let teraz =new Date();
@@ -39,6 +45,7 @@ export class Mytasks implements OnInit {
     else if(timeDif>ms){return `${Math.floor(timeDif/ms)} days and ${Math.floor((timeDif-(Math.floor(timeDif/ms)*ms))/(ms/24))} hours`}
     else if(timeDif>(ms/24)){return `${Math.floor(timeDif/(ms/24))} hours and ${Math.floor((timeDif-(Math.floor(timeDif/(ms/24))*(ms/24)))/(1000*60))} minutes`}
     else if(timeDif>0){return `${Math.floor(timeDif/(1000*60))} minutes`}
+    else if(timeDif<=0){return "Task is overdue"}
     else return null;
   }
   giveBoard(task: Task){

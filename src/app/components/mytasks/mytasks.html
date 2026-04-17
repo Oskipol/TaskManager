@@ -20,16 +20,21 @@
             <button class="cursor-pointer hidden md:block">Back</button>
             <div class="h-full aspect-square bg-[url('/arrow.png')] bg-cover bg-center block md:hidden"></div>
           </button>
-          <div class="w-10 aspect-square flex justify-center items-center cursor-pointer" style="background-image: url('/gear.png'); background-size: cover; background-position: center;">
+          <div class="w-10 aspect-square flex justify-center items-center cursor-pointer hover:rotate-180 duration-300" style="background-image: url('/gear.png'); background-size: cover; background-position: center;">
             <div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
         </div>
         
 </div>
+@if(TaskInfoMode()){
+          <app-task-info2 [selectedTask]="selectedTask()" (closed)="TaskInfoMode.set(false)"></app-task-info2>
+        }
 <div class="w-full flex flex-col gap-5 min-h-[90vh] p-4 md:p-10 mt-[10vh]">
-
+  @if(tasks().length==0){
+    <p class="text-gray-300 text-center" style="font-size: 5cqi;">You have no tasks assigned to you.</p>
+  }
   @for(task of tasks(); track task.id){
 
-  <div class="w-full rounded-2xl overflow-hidden flex flex-col md:flex-row">
+  <div (click)="TaskInfo(task)" class="w-full cursor-pointer rounded-2xl overflow-hidden flex flex-col md:flex-row">
 
     <div class="w-full md:w-[40%] bg-gray-500 p-4 md:p-6 flex flex-col justify-center gap-2">
       <h2 class="text-white rationale-regular text-lg md:text-2xl lg:text-4xl font-bold break-word">

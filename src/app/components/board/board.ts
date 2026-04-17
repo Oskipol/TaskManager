@@ -38,7 +38,7 @@ import { Settings } from './settings/settings';
             <button class="cursor-pointer hidden md:block">Back</button>
             <div class="h-full aspect-square bg-[url('/arrow.png')] bg-cover bg-center block md:hidden"></div>
           </button>
-          <div class="w-10 aspect-square flex justify-center items-center cursor-pointer" (click)="SettingsMode.set(true)" style="background-image: url('/gear.png'); background-size: cover; background-position: center;"><div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
+          <div class="w-10 aspect-square flex justify-center items-center cursor-pointer hover:rotate-180 duration-300" (click)="SettingsMode.set(true)" style="background-image: url('/gear.png'); background-size: cover; background-position: center;"><div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
         </div>
       </div>
 
@@ -87,7 +87,7 @@ import { Settings } from './settings/settings';
                 (dragover)="onDragOver($event)"
                 (drop)="onDrop($event, member)"
               >
-                <div class="min-w-[20vw] max-w-[35vw] inline-block">
+                <div class="w-[25vw] inline-block">
                   <p
                   style="font-size: 5cqi;"
                   class="rationale-regular wrap-break-word  text-center font-bold"

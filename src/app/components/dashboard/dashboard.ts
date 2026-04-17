@@ -15,7 +15,7 @@ import { Settings } from './settings/settings';
       <h1 style="font-size: 5cqi;" class="rationale-regular font-bold text-white">Your Boards</h1>
       <div class="flex gap-3">
         <button (click)="logout()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 cursor-pointer duration-300 rounded">Logout</button>
-      <div class="w-10 aspect-square flex justify-center items-center cursor-pointer" style="background-image: url('/gear.png'); background-size: cover; background-position: center;" (click)="SettingsMode.set(true)"><div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
+      <div class="w-10 aspect-square flex justify-center items-center cursor-pointer hover:rotate-180 duration-300" style="background-image: url('/gear.png'); background-size: cover; background-position: center;" (click)="SettingsMode.set(true)"><div class="w-[40%] h-[40%] rounded-[50%] bg-gray-700"></div></div>
       </div>
     </div>
     <div class="relative w-full bg-gray-800 px-[5%] h-[10%] min-h-25 rationale-regular flex justify-start items-center">

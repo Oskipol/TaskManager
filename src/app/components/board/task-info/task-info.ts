@@ -144,6 +144,7 @@ giveDate():string|null{
     else if(timeDif>ms){return `${Math.floor(timeDif/ms)} days and ${Math.floor((timeDif-(Math.floor(timeDif/ms)*ms))/(ms/24))} hours`}
     else if(timeDif>(ms/24)){return `${Math.floor(timeDif/(ms/24))} hours and ${Math.floor((timeDif-(Math.floor(timeDif/(ms/24))*(ms/24)))/(1000*60))} minutes`}
     else if(timeDif>0){return `${Math.floor(timeDif/(1000*60))} minutes`}
+    else if(timeDif<=0){return "Task is overdue"}
     else return null;
   }
 }
