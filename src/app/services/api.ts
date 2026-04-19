@@ -11,7 +11,7 @@ import { Board } from '../models/board.model';
 
 export class ApiService {
   
-  private url="http://192.168.0.25:5294/api";
+  private url="/taskmanager-api/api";
   constructor(private http: HttpClient, private auth: AuthService){}
 
   private headers(){
@@ -19,12 +19,9 @@ export class ApiService {
       Authorization: `Bearer ${this.auth.getToken()}`
     });
   }
-  register(username: string, email: string, password: string){
-    return this.http.post<{token: string; username: string;}>(
-      `${this.url}/Auth/register`,
-      {username, email, password}
-    );
-  }
+  register(username: string, email: string, password: string) {
+  return this.http.post<string>(`${this.url}/Auth/register`, { username, email, password }, { responseType: 'text' as 'json' });
+}
   login(email: string, password: string){
     return this.http.post<{token: string; username: string;}>(
       `${this.url}/Auth/login`,
@@ -45,6 +42,9 @@ export class ApiService {
     return this.http.post<Board>(`${this.url}/Boards/join`, {code} ,{
       headers: this.headers()
     });
+  }
+  resendConfirmation(email: string) {
+    return this.http.post(`${this.url}/Auth/resend-confirmation`, { email }, { responseType: 'text'});
   }
 
   getLeaders(boardId: number){
@@ -101,6 +101,13 @@ export class ApiService {
       headers: this.headers()
     });
   }
+  forgotPassword(email: string) {
+  return this.http.post(`${this.url}/Auth/forgot-password`, { email }, { responseType: 'text' });
+}
+
+resetPassword(token: string, newPassword: string) {
+  return this.http.post(`${this.url}/Auth/reset-password`, { token, newPassword }, { responseType: 'text' });
+}
   updateTask(task: Task) {
   return this.http.put<Task>(`${this.url}/Tasks`, {
     id: task.id,

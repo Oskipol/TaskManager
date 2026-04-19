@@ -19,8 +19,17 @@ import { AuthService } from '../../../services/auth';
       }
       <button (click)="login()" class="bg-blue-600 w-[40%] hover:bg-blue-700 duration-300 cursor-pointer text-white py-2 px-4 rounded-lg transition-colors">Login</button>
       </div>
+      <p class="text-gray-400 rationale-regular text-center">
+  <span (click)="ForgotMode.set(true)" class="text-blue-400 cursor-pointer hover:underline duration-300">Forgot password?</span>
+</p>
       <p  class="text-gray-400 rationale-regular text-center">You don't have an account? <a routerLink="/register" class="text-blue-400 hover:underline duration-300">Register</a></p>
-      
+      @if(ForgotMode()) {
+  <input [(ngModel)]="forgotEmail" type="email" placeholder="Your email"
+    class="bg-gray-700 w-[80%] my-5 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"/>
+  <button (click)="forgotPassword()" class="bg-blue-600 w-[40%] hover:bg-blue-700 duration-300 cursor-pointer text-white py-2 px-4 rounded-lg">
+    Send
+  </button>
+}
   </div>
   `,
   styleUrl: './login.css',
@@ -29,7 +38,20 @@ export class Login {
   email='';
   password='';
   error=signal('');
+  ForgotMode = signal(false);
+forgotEmail = '';
   constructor(private api: ApiService, private auth: AuthService, private router: Router){}
+  
+
+forgotPassword() {
+  this.api.forgotPassword(this.forgotEmail).subscribe({
+    next: () => {
+      this.ForgotMode.set(false);
+      this.error.set("Check your email for reset link");
+    },
+    error: () => this.error.set("Email not found")
+  });
+}
   login(){
     if(this.email&&this.password){
     this.api.login(this.email, this.password).subscribe({

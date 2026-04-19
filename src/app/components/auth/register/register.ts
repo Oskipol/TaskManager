@@ -19,6 +19,9 @@ import { AuthService } from '../../../services/auth';
         @if(error()){
         <p class="text-red-400 text-lg">{{error()}}</p>
       }
+      @if(ResendMode()){
+        <p class="text-gray-400 text-lg">Didn't receive the email? <span (click)="resend()" class="text-blue-400 cursor-pointer hover:underline duration-300">Resend</span></p>
+      }
       <button (click)="register()" class="bg-blue-600 w-[40%] hover:bg-blue-700 duration-300 cursor-pointer text-white py-2 px-4 rounded-lg transition-colors">Register</button>    
       </div>
       <p  class="text-gray-400 rationale-regular text-center">You already have an account? <a routerLink="/login" class="text-blue-400 cursor-pointer hover:underline duration-300">Login</a></p>
@@ -33,8 +36,25 @@ export class Register {
   password1='';
   password2='';
   error=signal('');
+  ResendMode=signal(false);
   constructor(private api: ApiService, private auth: AuthService, private router: Router){}
+  resend(){
+    this.api.resendConfirmation(this.email).subscribe({
+      next: () => {
+        this.ResendMode.set(false);
+        this.error.set("Check your email to confirm your account");
+      },
+      error: (err) => {
+        if (err.status === 400) {
+          this.error.set("Email already in use");
+        } else {
+          this.error.set("Error");
+        }
+      }
+    });
+  }
   register(){
+    this.ResendMode.set(true);
     if(this.password1===this.password2){
       if(this.username&&this.email&&this.password1){
         if(!this.email.includes("@")){
@@ -50,14 +70,18 @@ export class Register {
           return;
         }
     this.api.register(this.username, this.email, this.password1).subscribe({
-      next: res=>{
-        this.auth.saveAuth(res.token, {id: 0, username: res.username, email: this.email});
-        this.router.navigate(["/dashboard"]);
-      },
-      error:()=>{
-        this.error.set("Error");
-      }
-    });
+  next: () => {
+    this.error.set("Check your email to confirm your account");
+    this.ResendMode.set(false);
+  },
+  error: (err) => {
+    if (err.status === 400) {
+      this.error.set("Email already in use");
+    } else {
+      this.error.set("Error");
+    }
+  }
+});
     }else{this.error.set("Fill out every field");}}
     else{
       this.error.set("Passwords doesn't match");
