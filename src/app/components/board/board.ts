@@ -16,9 +16,10 @@ import { Settings } from './settings/settings';
   imports: [CommonModule, FormsModule, RouterLink, DragDropModule, AddTask, TaskInfo, Settings],
   template: `
     <div class="w-full h-full inset-0 min-h-screen bg-gray-800">
+      
       <div
         style="container-type: inline-size;"
-        class="fixed top-0 z-10 left-0 bg-gray-900 h-[10vh] min-h-15 w-full flex justify-between items-center px-[2%]"
+        class="fixed top-0 z-50 left-0 bg-gray-900 h-[10vh] min-h-15 w-full flex justify-between items-center px-[2%]"
       >
         <h1 style="font-size: 5cqi;" class="rationale-regular font-bold text-white">
           Your Board Tasks
@@ -43,6 +44,7 @@ import { Settings } from './settings/settings';
       </div>
 
       <div class="w-full mt-[10vh] bg-gray-800 relative">
+        
           @if(SettingsMode()){
             <app-settings [store]="store" [members]="members()" [BoardId]="boardId" (closed)="SettingsMode.set(false)"></app-settings>
           }
@@ -64,7 +66,7 @@ import { Settings } from './settings/settings';
                 <div
                   (click)="TaskInfo(task)"
                   style="container-type: inline-size;"
-                  class="bg-gray-600 overflow-hidden aspect-5/3 min-w-[50%] md:min-w-[40%] lg:min-w-[30%]  p-4 rounded-lg cursor-grab"
+                  class="bg-gray-600 relative overflow-hidden aspect-5/3 min-w-[50%] md:min-w-[40%] lg:min-w-[30%]  p-4 rounded-lg cursor-grab"
                   draggable="true"
                   (dragstart)="onDragStart($event, task)"
                 >
@@ -75,6 +77,7 @@ import { Settings } from './settings/settings';
                     {{ task.title }}
                   </h4>
                   <p style="font-size: 10cqi;" class="text-gray-300">{{ task.description }}</p>
+                  <p class="absolute bottom-1 right-2 text-amber-600 z-5" style="font-size: 10cqi;">{{task.points}} pts</p>
                 </div>
               }
             }
@@ -95,9 +98,13 @@ import { Settings } from './settings/settings';
                 >
                   {{ member }}
                 </p>
-                <p class="text-white text-center" style="font-size: 2.5cqi;">Points: {{ store.Points()[member] }}</p>
+                <p class="text-gray-400 text-center flex justify-center items-center gap-5" style="font-size: 2cqi;">                 
+                Points: {{ store.Points()[member] }} pts
+                @if(store.Leaders().includes(member)){ · leader}
+                @if(store.Supervisors().includes(member)){ · supervisor}
+                </p>
                 </div>
-
+              
                 @for (task of tasks(); track $index) {
                   @if (task.assignedTo == member) {
                     <div
@@ -121,8 +128,21 @@ import { Settings } from './settings/settings';
               </div>
             }
           </div>
+          
         </div>
+        
       </div>
+      <div style="container-type: inline-size;" class="fixed hover:opacity-10 duration-300 z-30 left-0 bottom-0 m-5 bg-gray-700 rounded-2xl lg:w-[20%] md:w-[30%] w-[40%] aspect-2/1 flex justify-around items-center">
+              <div class="w-[33%] relative h-full flex flex-col justify-center items-center gap-2">
+                <div class="w-[50%] aspect-square rounded-2xl bg-red-500"></div> <p class="text-gray-300" style="font-size: 7cqi;">todo</p>
+              </div>
+              <div class="w-[33%] relative h-full flex flex-col justify-center items-center gap-2">
+                <div class="w-[50%] aspect-square rounded-2xl bg-gray-500"></div> <p class="text-gray-300" style="font-size: 7cqi;">in progress</p>
+              </div>
+              <div class="w-[33%] relative h-full flex flex-col justify-center items-center gap-2">
+                <div class="w-[50%] aspect-square rounded-2xl bg-green-500"></div> <p class="text-gray-300" style="font-size: 7cqi;">done</p>
+              </div>
+              </div>
     </div>
   `,
 })
